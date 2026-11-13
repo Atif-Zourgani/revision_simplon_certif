@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>SEO et référencement (C7) - Révisions Wagtail</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="SEO title, hierarchie de titres, alt, sitemap, robots.txt, poids des images, audit Lighthouse.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="menu-toggle" aria-label="Ouvrir le menu">Menu</button>
+    <div class="brand">Révisions Wagtail <span>Découverte Métier IA, Simplon Bordeaux</span></div>
+    <div class="search-wrap">
+      <input id="search-input" type="text" placeholder="Chercher une notion..." autocomplete="off">
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-group">
+      <a href="index.html">Accueil</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Cadrage &amp; conception</h3>
+      <a href="cadrage-conception.html">Cadrage et wireframes (C1-C2)</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Construire avec Wagtail</h3>
+      <a href="environnement-wagtail.html">Environnement et bases (C3)</a>
+      <a href="contenu-administrable.html">Contenu administrable (C4-C6)</a>
+      <a href="permissions-publication.html">Permissions et publication (C4)</a>
+      <a href="responsive-css.html">Interfaces et responsive (C5)</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Optimisation (C7)</h3>
+      <a href="accessibilite.html">Accessibilité</a>
+      <a href="seo.html" class="active">SEO et référencement</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Conformité</h3>
+      <a href="rgpd.html">RGPD</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Finaliser</h3>
+      <a href="deploiement.html">Déploiement (C8)</a>
+      <a href="rapport-soutenance.html">Rapport et soutenance</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="page-head">
+      <h1>SEO et référencement</h1>
+      <p>Le référencement naturel (SEO) regroupe les techniques qui aident un moteur de recherche à comprendre, indexer et classer les pages d'un site. Wagtail en fournit déjà une partie nativement, il reste à les activer et les compléter.</p>
+      <div class="badges">
+        <span class="badge">C7</span>
+        <span class="badge alt">Évaluation 2 — Cas pratique</span>
+        <span class="badge alt">brief-seo-projet-personnel.pdf</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>SEO de contenu vs SEO technique</h2>
+      <p>Le <strong>SEO de contenu</strong> décrit chaque page individuellement (titre, description, structure du texte). Le <strong>SEO technique</strong> concerne l'infrastructure du site dans son ensemble (sitemap, vitesse de chargement, structure du code).</p>
+    </div>
+
+    <div class="card" id="seo-title">
+      <h2>1. Les champs SEO title / Search description</h2>
+      <p>Google n'affiche pas forcément le titre visible sur la page : il affiche en priorité le champ <strong>SEO title</strong>, et en dessous une courte description, <strong>Search description</strong>. Sans ces champs remplis, Google compose lui-même un extrait, souvent peu lisible ou peu engageant.</p>
+      <p>Dans l'admin Wagtail, l'onglet <strong>"Promote"</strong> de chaque page contient ces deux champs. Remplissez-les sur vos pages principales, avec un texte spécifique à chaque page.</p>
+      <div class="box ok">
+        <span class="label">Exemple, page "Nos cours" d'un studio de yoga</span>
+        <p><strong>SEO title</strong> : "Cours de yoga à Bordeaux, collectifs et individuels, Studio Namaste"<br>
+        <strong>Search description</strong> : "Découvrez nos cours de yoga collectifs et individuels à Bordeaux. Tous niveaux, réservez votre premier cours dès maintenant."</p>
+        <p>Ce texte reprend des mots qu'un visiteur taperait probablement dans Google ("cours de yoga", "Bordeaux"), tout en restant une vraie phrase lisible, pas une liste de mots-clés empilés.</p>
+      </div>
+    </div>
+
+    <div class="card" id="hierarchie-titres">
+      <h2>2. La hiérarchie de titres</h2>
+      <p>Un moteur de recherche lit la structure HTML pour comprendre le sujet principal (<code>&lt;h1&gt;</code>) et comment le contenu se découpe (<code>&lt;h2&gt;</code>, <code>&lt;h3&gt;</code>...). Une page sans structure claire, ou avec plusieurs <code>&lt;h1&gt;</code>, est plus difficile à classer.</p>
+      <p>Un seul <code>&lt;h1&gt;</code> par page, et des niveaux suivants qui s'enchaînent sans saut (jamais un <code>&lt;h2&gt;</code> suivi directement d'un <code>&lt;h4&gt;</code>).</p>
+    </div>
+
+    <div class="card" id="seo-alt">
+      <h2>3. Le texte alternatif des images</h2>
+      <p>Un moteur de recherche ne "voit" pas une image : il se base uniquement sur son <code>alt</code> pour savoir ce qu'elle représente. C'est ce texte qui permet à une image d'apparaître dans Google Images. Un <code>alt</code> absent ou générique ("image1") est une occasion manquée, à la fois pour le SEO et pour l'accessibilité (voir la page <a href="accessibilite.html">Accessibilité</a>).</p>
+      <pre>class CoachProfilPage(Page):
+    photo = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    photo_alt = models.CharField(
+        max_length=255, blank=True,
+        help_text="Decrit la photo (SEO + accessibilite)",
+    )
+
+    content_panels = Page.content_panels + [
+        FieldPanel("photo"),
+        FieldPanel("photo_alt"),
+    ]</pre>
+      <pre>{% image page.photo fill-800x600 alt=page.photo_alt %}</pre>
+    </div>
+
+    <div class="card" id="sitemap">
+      <h2>4. Le sitemap</h2>
+      <p>Un moteur de recherche découvre normalement les pages en suivant les liens d'une page à l'autre. Si une page est mal reliée, elle risque de ne jamais être découverte. Un sitemap liste explicitement toutes les URLs du site, sans dépendre des liens internes.</p>
+      <pre># settings/base.py
+INSTALLED_APPS = [
+    # ...
+    "django.contrib.sitemaps",
+    "wagtail.contrib.sitemaps",
+]</pre>
+      <pre># urls.py
+from wagtail.contrib.sitemaps.views import sitemap
+
+urlpatterns = [
+    # ...
+    path("sitemap.xml", sitemap),
+]</pre>
+      <p>Rechargez le serveur et ouvrez <code>/sitemap.xml</code> : la liste de vos pages publiées doit s'afficher, en XML, générée automatiquement depuis votre arbre de pages.</p>
+      <div class="box piege">
+        <span class="label">Piège fréquent</span>
+        <p>Oublier <code>"django.contrib.sitemaps"</code> dans <code>INSTALLED_APPS</code> : sans lui, Django ne trouve pas le template nécessaire, et affiche une erreur <code>TemplateDoesNotExist</code>.</p>
+      </div>
+    </div>
+
+    <div class="card" id="robots">
+      <h2>5. Le fichier robots.txt</h2>
+      <p>Avant d'explorer un site, un moteur de recherche cherche <code>/robots.txt</code> pour savoir ce qu'il a le droit d'explorer et où trouver le sitemap. Sans ce fichier, rien n'est bloqué par défaut, mais le point d'entrée vers le sitemap n'est pas explicite.</p>
+      <pre># urls.py
+from django.http import HttpResponse
+
+def robots_txt(request):
+    content = (
+        "User-agent: *\nAllow: /\nSitemap: "
+        + request.build_absolute_uri("/sitemap.xml")
+    )
+    return HttpResponse(content, content_type="text/plain")
+
+urlpatterns = [
+    # ...
+    path("robots.txt", robots_txt),
+]</pre>
+      <p><code>User-agent: *</code> s'adresse à tous les robots, <code>Allow: /</code> autorise l'exploration de tout le site, <code>Sitemap:</code> donne l'adresse complète du fichier généré au point précédent.</p>
+    </div>
+
+    <div class="card" id="poids-images">
+      <h2>6. Le poids des images</h2>
+      <p>La vitesse de chargement fait partie des critères de classement, et une page lente abîme l'expérience du visiteur. Une image affichée en petit mais chargée en grand fait transférer des données jamais vues à l'écran.</p>
+      <pre>{% image page.photo width-800 %}</pre>
+    </div>
+
+    <div class="card" id="lighthouse-seo">
+      <h2>7. Audit Lighthouse, catégorie SEO</h2>
+      <p>Lighthouse vérifie automatiquement une partie des points vus ci-dessus (titres, meta-description, alt, taille des liens cliquables...). DevTools → onglet Lighthouse → décocher tout sauf SEO → lancer l'analyse → corriger chaque problème signalé.</p>
+    </div>
+
+    <div class="card">
+      <h2>8. Préparer sa justification orale</h2>
+      <p>Pour chaque optimisation appliquée, une ou deux phrases expliquant pourquoi elle est pertinente pour <strong>votre</strong> projet précis, pas une explication générale du SEO. Ce texte sert de support direct pour le Cas pratique, où vous devrez argumenter ces choix face au jury.</p>
+    </div>
+
+    <div class="card">
+      <h2>Checklist avant l'oral</h2>
+      <ul class="checklist">
+        <li><code>seo_title</code> et <code>search_description</code> remplis sur les pages principales, spécifiques à chaque page</li>
+        <li>Un seul <code>h1</code> par page, hiérarchie de titres cohérente</li>
+        <li>Images avec un <code>alt</code> pertinent</li>
+        <li><code>/sitemap.xml</code> répond et liste les pages publiées</li>
+        <li><code>/robots.txt</code> existe et pointe vers le sitemap</li>
+        <li>Poids des images maîtrisé (taille d'affichage proche de la taille réelle)</li>
+        <li>Audit Lighthouse SEO passé, problèmes corrigés</li>
+        <li>Une justification écrite pour chaque choix, prête pour l'oral</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Pour aller plus loin</h2>
+      <ul>
+        <li><a href="https://developers.google.com/search/docs" target="_blank" rel="noopener">Google Search Central</a> — documentation officielle de Google sur le référencement.</li>
+        <li><a href="https://developers.google.com/search/docs/fundamentals/seo-starter-guide" target="_blank" rel="noopener">Guide de démarrage SEO de Google</a> — bonnes pratiques de base, écrites pour les développeurs.</li>
+      </ul>
+    </div>
+  </main>
+</div>
+
+<footer class="site-footer">Découverte Métier IA — Simplon Bordeaux</footer>
+
+<script src="js/search-data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

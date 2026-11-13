@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Environnement et bases Wagtail (C3) - Révisions Wagtail</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Installation, environnement virtuel, structure d'un projet Wagtail, pages statiques et dynamiques, images, templates.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="menu-toggle" aria-label="Ouvrir le menu">Menu</button>
+    <div class="brand">Révisions Wagtail <span>Découverte Métier IA, Simplon Bordeaux</span></div>
+    <div class="search-wrap">
+      <input id="search-input" type="text" placeholder="Chercher une notion..." autocomplete="off">
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-group">
+      <a href="index.html">Accueil</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Cadrage &amp; conception</h3>
+      <a href="cadrage-conception.html">Cadrage et wireframes (C1-C2)</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Construire avec Wagtail</h3>
+      <a href="environnement-wagtail.html" class="active">Environnement et bases (C3)</a>
+      <a href="contenu-administrable.html">Contenu administrable (C4-C6)</a>
+      <a href="permissions-publication.html">Permissions et publication (C4)</a>
+      <a href="responsive-css.html">Interfaces et responsive (C5)</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Optimisation (C7)</h3>
+      <a href="accessibilite.html">Accessibilité</a>
+      <a href="seo.html">SEO et référencement</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Conformité</h3>
+      <a href="rgpd.html">RGPD</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Finaliser</h3>
+      <a href="deploiement.html">Déploiement (C8)</a>
+      <a href="rapport-soutenance.html">Rapport et soutenance</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="page-head">
+      <h1>Environnement et bases d'un projet Wagtail</h1>
+      <p>Installer un projet, comprendre ce qu'est une Page Wagtail, et les deux gestes qui reviennent partout : la migration et le template.</p>
+      <div class="badges">
+        <span class="badge">C3</span>
+        <span class="badge alt">Briefs 3a, 3b, 3c</span>
+        <span class="badge alt">Mini-cours structure projet</span>
+      </div>
+    </div>
+
+    <div class="card" id="c3">
+      <h2>Installer un projet, étape par étape</h2>
+      <pre>python3 -m venv venv              # cree un espace isole pour les dependances de ce projet
+source venv/bin/activate          # active cet espace isole
+pip install wagtail               # installe Wagtail (et Django avec)
+wagtail start moncentre .         # genere la structure du projet
+python manage.py migrate          # cree les tables de la base de donnees
+python manage.py createsuperuser  # cree votre compte admin
+python manage.py runserver        # demarre le serveur local</pre>
+      <div class="box info">
+        <span class="label">Reprendre un projet existant (collègue, Coach Max...)</span>
+        <p>On ne refait pas <code>wagtail start</code> : on clone le repo, on recrée l'environnement (jamais poussé sur git), puis on applique les migrations.</p>
+        <pre>git clone &lt;url-du-repo&gt;
+cd &lt;dossier-du-projet&gt;
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt   # reinstalle exactement les memes versions
+python manage.py migrate
+python manage.py runserver</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Qu'est-ce qu'une Page Wagtail ?</h2>
+      <p>Un type de page est une classe Python qui hérite de <code>Page</code>. Une classe vide, avec seulement <code>pass</code>, est une <strong>page statique</strong> : elle existe (titre, URL, statut publié/brouillon), mais son contenu est écrit en dur dans le template HTML, pas modifiable depuis l'admin.</p>
+      <pre>from wagtail.models import Page
+
+class HomePage(Page):
+    pass</pre>
+      <h3>La rendre dynamique : ajouter des champs</h3>
+      <p>Pour qu'un contenu devienne modifiable depuis l'admin, trois choses à faire ensemble, toujours dans cet ordre :</p>
+      <ol>
+        <li>Ajouter le champ au modèle (<code>models.py</code>).</li>
+        <li>L'ajouter à <code>content_panels</code> via un <code>FieldPanel</code> (sinon il reste invisible dans l'admin, même s'il existe en base).</li>
+        <li>Générer puis appliquer la migration.</li>
+      </ol>
+      <pre>from django.db import models
+from wagtail.admin.panels import FieldPanel
+from wagtail.fields import RichTextField
+from wagtail.models import Page
+
+class CompetencesPage(Page):
+    accroche = models.CharField(max_length=255, blank=True)   # texte court
+    description = RichTextField(blank=True)                   # texte riche (plusieurs paragraphes, mise en forme)
+
+    content_panels = Page.content_panels + [
+        FieldPanel("accroche"),
+        FieldPanel("description"),
+    ]</pre>
+      <pre>python manage.py makemigrations &lt;nom_app&gt;   # genere le fichier decrivant le changement
+python manage.py migrate                     # applique le changement a la base</pre>
+      <div class="box piege">
+        <span class="label">Piège fréquent</span>
+        <p>Oublier le <code>FieldPanel</code> dans <code>content_panels</code> : le champ existe en base mais reste invisible dans l'admin. Ou oublier le filtre <code>|richtext</code> dans le template sur un <code>RichTextField</code> : le contenu s'affiche en texte brut, balises HTML comprises.</p>
+      </div>
+      <h3>Les types de champs les plus utilisés</h3>
+      <table>
+        <tr><th>Champ</th><th>Usage</th></tr>
+        <tr><td><code>CharField(max_length=...)</code></td><td>Texte court, une ligne (titre, accroche, téléphone).</td></tr>
+        <tr><td><code>TextField()</code></td><td>Texte long sans mise en forme (adresse). Avec <code>{{ page.adresse|linebreaks }}</code> pour garder les retours à la ligne.</td></tr>
+        <tr><td><code>RichTextField()</code></td><td>Plusieurs paragraphes avec mise en forme (gras, listes, liens). Toujours avec <code>|richtext</code> dans le template.</td></tr>
+        <tr><td><code>ForeignKey("wagtailimages.Image", ...)</code></td><td>Une image administrable (voir plus bas).</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Fichiers statiques : CSS, JS, images non administrables</h2>
+      <p>Un fichier statique (CSS, JS, ou une image que personne ne doit changer depuis l'admin) est servi via la balise <code>{% static %}</code>. C'est un fichier sur le disque, identique pour tout le monde.</p>
+      <pre>{% load static %}
+&lt;img src="{% static 'images/competences.jpg' %}" alt="Illustration de mes competences"&gt;
+&lt;link rel="stylesheet" href="{% static 'css/mysite.css' %}"&gt;</pre>
+    </div>
+
+    <div class="card" id="image-wagtail">
+      <h2>Une image administrable : pas un simple fichier</h2>
+      <p>Dans Wagtail, une image modifiable depuis l'admin n'est pas un chemin de fichier : c'est un objet stocké dans la bibliothèque d'images de Wagtail. Le champ sur le modèle est donc une <strong>relation</strong> (<code>ForeignKey</code>) vers le modèle <code>Image</code> de Wagtail, pas un <code>CharField</code>.</p>
+      <pre>photo = models.ForeignKey(
+    "wagtailimages.Image",     # pointe vers la bibliotheque d'images Wagtail
+    null=True,                 # peut etre vide en base
+    blank=True,                # peut etre vide dans le formulaire admin
+    on_delete=models.SET_NULL, # si l'image est supprimee, le champ redevient vide
+    related_name="+",          # pas besoin de retrouver les pages depuis l'image
+)</pre>
+      <p>Dans le template, on ne peut pas se contenter d'un <code>&lt;img src=""&gt;</code> : il faut la balise <code>{% image %}</code>, avec une spec de redimensionnement.</p>
+      <pre>{% load wagtailimages_tags %}
+{% image page.photo fill-800x600 class="page-image" alt=page.photo_alt %}</pre>
+      <div class="box info">
+        <span class="label">Rappel accessibilité</span>
+        <p>Rendez aussi l'<code>alt</code> administrable (un <code>CharField</code> à côté du champ photo), rempli par la même personne qui choisit l'image. Voir la page <a href="accessibilite.html">Accessibilité</a>.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Organiser un projet en plusieurs apps <span class="source-tag">mini-cours-structure-projet-wagtail.md</span></h2>
+      <p><code>wagtail start</code> ne crée qu'une seule app de pages, <code>home</code>, faite pour <code>HomePage</code> uniquement. Pour toutes les autres pages, on crée une app dédiée (souvent appelée <code>pages</code>) plutôt que de tout entasser dans <code>home/models.py</code>.</p>
+      <pre>python manage.py startapp pages
+# puis ajouter "pages" dans INSTALLED_APPS (settings/base.py)
+mkdir -p pages/templates/pages</pre>
+      <pre>moncentre/
+├── home/              # seulement HomePage
+│   └── models.py
+├── pages/             # toutes les autres pages
+│   └── models.py
+└── manage.py</pre>
+      <div class="box ok">
+        <span class="label">.gitignore à garder</span>
+        <pre>venv/
+__pycache__/
+*.pyc
+.DS_Store
+/media/
+/static/
+.env</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Le header commun, dans base.html</h2>
+      <p>Tout ce qui est écrit dans <code>base.html</code>, en dehors de <code>{% block content %}</code>, s'affiche automatiquement sur toutes les pages. C'est l'endroit pour un header unique, jamais recopié dans chaque template.</p>
+      <pre>&lt;body&gt;
+    {% wagtailuserbar %}
+
+    &lt;header&gt;
+        &lt;strong&gt;Mon site&lt;/strong&gt;
+        &lt;nav&gt;
+            &lt;a href="/"&gt;Accueil&lt;/a&gt;
+            &lt;a href="/contact/"&gt;Contact&lt;/a&gt;
+        &lt;/nav&gt;
+    &lt;/header&gt;
+
+    {% block content %}{% endblock %}
+&lt;/body&gt;</pre>
+      <div class="box piege">
+        <span class="label">Piège fréquent</span>
+        <p>Laisser le header copié-collé dans chaque template de page au lieu de le remonter une seule fois dans <code>base.html</code> : un changement doit alors être répété partout, source d'oubli et d'incohérence.</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<footer class="site-footer">Découverte Métier IA — Simplon Bordeaux</footer>
+
+<script src="js/search-data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

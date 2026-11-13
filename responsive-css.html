@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Interfaces et responsive (C5) - Révisions Wagtail</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Realiser des interfaces fidèles aux wireframes, flexbox et media queries pour le responsive.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="menu-toggle" aria-label="Ouvrir le menu">Menu</button>
+    <div class="brand">Révisions Wagtail <span>Découverte Métier IA, Simplon Bordeaux</span></div>
+    <div class="search-wrap">
+      <input id="search-input" type="text" placeholder="Chercher une notion..." autocomplete="off">
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-group">
+      <a href="index.html">Accueil</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Cadrage &amp; conception</h3>
+      <a href="cadrage-conception.html">Cadrage et wireframes (C1-C2)</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Construire avec Wagtail</h3>
+      <a href="environnement-wagtail.html">Environnement et bases (C3)</a>
+      <a href="contenu-administrable.html">Contenu administrable (C4-C6)</a>
+      <a href="permissions-publication.html">Permissions et publication (C4)</a>
+      <a href="responsive-css.html" class="active">Interfaces et responsive (C5)</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Optimisation (C7)</h3>
+      <a href="accessibilite.html">Accessibilité</a>
+      <a href="seo.html">SEO et référencement</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Conformité</h3>
+      <a href="rgpd.html">RGPD</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Finaliser</h3>
+      <a href="deploiement.html">Déploiement (C8)</a>
+      <a href="rapport-soutenance.html">Rapport et soutenance</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="page-head">
+      <h1>Réaliser les interfaces et les rendre responsive</h1>
+      <p>Construire un rendu fidèle aux wireframes, puis le faire tenir sur toutes les tailles d'écran avec deux techniques CSS à combiner.</p>
+      <div class="badges">
+        <span class="badge">C5</span>
+        <span class="badge alt">mini-cours-responsive.md</span>
+      </div>
+    </div>
+
+    <div class="card" id="c5">
+      <h2>C5 — Des wireframes au rendu final</h2>
+      <p>Le rapport de certification attend un lien explicite entre ce qui était prévu dans les wireframes et ce qui a été implémenté : même disposition de zones, mêmes enchaînements de pages, personnalisation graphique cohérente (couleurs, mise en page) choisie et justifiée, pas seulement "ça rend bien".</p>
+    </div>
+
+    <div class="card">
+      <h2>Flexbox d'abord, sans media query</h2>
+      <p>Avec <code>display: flex</code> et <code>flex-wrap</code>, les éléments passent à la ligne tout seuls quand ils ne rentrent plus. À privilégier en premier : plus simple, couvre déjà beaucoup de cas (cartes, listes de prestations, de cours...).</p>
+      <pre>.cards {
+    display: flex;
+    flex-wrap: wrap;       /* les cartes passent a la ligne si ca ne rentre plus */
+    gap: 16px;
+}
+
+.card {
+    flex: 1 1 220px;       /* grandit/retrecit, mais jamais sous 220px */
+    padding: 24px;
+    box-sizing: border-box;
+}</pre>
+    </div>
+
+    <div class="card">
+      <h2>Media queries, quand la structure doit changer</h2>
+      <p>Flexbox ne suffit pas toujours : parfois on veut une vraie structure différente entre mobile et desktop (ex : un menu empilé qui devient horizontal). C'est le rôle de la media query.</p>
+      <pre>.site-header {
+    display: flex;
+    flex-direction: column;   /* empile logo et menu par defaut (mobile) */
+    gap: 8px;
+}
+
+@media (min-width: 768px) {
+    .site-header {
+        flex-direction: row;          /* cote a cote a partir de la tablette/desktop */
+        justify-content: space-between;
+    }
+}</pre>
+      <div class="box info">
+        <span class="label">Dans quel ordre réfléchir ?</span>
+        <p>D'abord se demander si flexbox seul peut suffire (une liste d'éléments similaires). Si un vrai changement de structure est nécessaire (empilé → côte à côte), ajouter une media query par-dessus.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Images : s'adapter sans déformer</h2>
+      <pre>.hero-image {
+    width: 100%;        /* s'adapte a la largeur de l'ecran */
+    max-width: 1200px;  /* mais ne depasse jamais cette taille sur grand ecran */
+    height: auto;       /* garde les proportions */
+}</pre>
+    </div>
+
+    <div class="card">
+      <h2>Comment tester</h2>
+      <ul>
+        <li><code>Cmd+Shift+M</code> (Mac) ou <code>Ctrl+Shift+M</code> (Windows/Linux) pour le mode responsive des DevTools.</li>
+        <li>Testez plusieurs tailles précises, pas seulement en redimensionnant la fenêtre à la main.</li>
+        <li>Vérifiez en priorité les pages identifiées mobile-first dans votre cadrage (C1).</li>
+      </ul>
+      <div class="box piege">
+        <span class="label">Piège fréquent</span>
+        <p>Ne tester que sur son propre écran d'ordinateur, sans jamais activer le mode responsive : certains problèmes (menu qui déborde, texte qui chevauche une image) ne sont visibles qu'en-dessous d'une certaine largeur.</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<footer class="site-footer">Découverte Métier IA — Simplon Bordeaux</footer>
+
+<script src="js/search-data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

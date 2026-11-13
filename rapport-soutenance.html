@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Rapport et soutenance - Révisions Wagtail</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Structure du rapport de certification, exemple Coach Max par partie, checklist avant envoi.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="menu-toggle" aria-label="Ouvrir le menu">Menu</button>
+    <div class="brand">Révisions Wagtail <span>Découverte Métier IA, Simplon Bordeaux</span></div>
+    <div class="search-wrap">
+      <input id="search-input" type="text" placeholder="Chercher une notion..." autocomplete="off">
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-group">
+      <a href="index.html">Accueil</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Cadrage &amp; conception</h3>
+      <a href="cadrage-conception.html">Cadrage et wireframes (C1-C2)</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Construire avec Wagtail</h3>
+      <a href="environnement-wagtail.html">Environnement et bases (C3)</a>
+      <a href="contenu-administrable.html">Contenu administrable (C4-C6)</a>
+      <a href="permissions-publication.html">Permissions et publication (C4)</a>
+      <a href="responsive-css.html">Interfaces et responsive (C5)</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Optimisation (C7)</h3>
+      <a href="accessibilite.html">Accessibilité</a>
+      <a href="seo.html">SEO et référencement</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Conformité</h3>
+      <a href="rgpd.html">RGPD</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Finaliser</h3>
+      <a href="deploiement.html">Déploiement (C8)</a>
+      <a href="rapport-soutenance.html" class="active">Rapport et soutenance</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="page-head">
+      <h1>Rapport écrit et soutenance orale</h1>
+      <p>Un document de 5 à 15 pages qui aborde explicitement l'ensemble des compétences C1 à C6 et C8, illustré par des éléments concrets de votre projet. Une partie courte et bien illustrée vaut mieux qu'une partie longue et vague.</p>
+      <div class="badges">
+        <span class="badge">Évaluation 1</span>
+        <span class="badge alt">guide-rapport-certification.md</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Les deux évaluations de la certification</h2>
+      <table>
+        <tr><th>Évaluation</th><th>Format</th><th>Compétences</th></tr>
+        <tr>
+          <td><strong>Évaluation 1</strong><br>Projet</td>
+          <td>Rapport écrit (5 à 15 pages) + soutenance orale : 10 min de présentation, 10 min de démo, 10 min de questions</td>
+          <td>C1 à C6, et C8</td>
+        </tr>
+        <tr>
+          <td><strong>Évaluation 2</strong><br>Cas pratique</td>
+          <td>15 min de présentation + 5 min de questions sur l'optimisation d'une application</td>
+          <td>C7 : voir <a href="accessibilite.html">Accessibilité</a> et <a href="seo.html">SEO</a></td>
+        </tr>
+      </table>
+      <div class="box piege">
+        <span class="label">Piège fréquent</span>
+        <p>C7 (SEO et accessibilité) n'a pas besoin d'être traité dans le rapport écrit : il est évalué séparément à l'oral, via le Cas pratique. Ne consacrez pas de partie du rapport à ces deux sujets.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Rappel important avant d'envoyer</h2>
+      <div class="box piege">
+        <span class="label">À supprimer avant envoi</span>
+        <p>Le template fourni par l'école contient, pour chaque partie, un tableau "Compétence / Modalités d'évaluation" repris du référentiel. Ce tableau aide pendant la rédaction, mais doit être <strong>supprimé avant l'envoi final</strong> du rapport au jury.</p>
+      </div>
+    </div>
+
+    <div class="card" id="structure">
+      <h2>La structure du rapport, dans l'ordre</h2>
+      <table>
+        <tr><th>Partie</th><th>Ce qu'on y attend</th></tr>
+        <tr><td>Résumé exécutif</td><td>Tout le projet en quelques phrases (besoin, solution, résultat). Se rédige en dernier, même positionné en premier.</td></tr>
+        <tr><td>Introduction / Contexte</td><td>Uniquement la situation du client avant le projet. Aucun mot sur la solution, ça arrive plus tard.</td></tr>
+        <tr><td>Partie 1 — Analyse du besoin (C1)</td><td>Synthèse du cadrage : objectifs, utilisateurs, usages, contenus, enjeux RGPD. Document complet en annexe.</td></tr>
+        <tr><td>Partie 1 — Solution technique (C2+C3)</td><td>Schéma fonctionnel/wireframes, pourquoi Wagtail et quelles extensions, installation de l'environnement.</td></tr>
+        <tr><td>Partie 2 — Réalisation (C4, C5, C6)</td><td>Paramétrage (droits, extensions), interfaces réalisées, intégration/hiérarchisation des contenus, problèmes rencontrés, solutions apportées.</td></tr>
+        <tr><td>Partie 3 — Déploiement (C8)</td><td>À mettre de côté pour l'instant, voir <a href="deploiement.html">Déploiement</a>.</td></tr>
+        <tr><td>Partie 4 — Bilan</td><td>Objectifs atteints ou non, points forts, points perfectibles, pistes d'amélioration.</td></tr>
+        <tr><td>Conclusion</td><td>Vos apprentissages personnels, pas ceux du client fictif/réel, et le lien avec votre projet professionnel.</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Exemple fictif, Coach Max, par partie</h2>
+      <h3>Résumé exécutif</h3>
+      <p><em>"Max, coach sportif indépendant à Bordeaux, souhaitait un site vitrine pour présenter son activité, son équipe de coachs et son offre de cours, et être facilement contacté par de nouveaux clients. Le site a été développé avec le CMS Wagtail, avec des contenus entièrement administrables par Max sans intervention technique. Le site est actuellement en ligne à l'adresse coach-max.fr."</em></p>
+      <h3>Introduction / Contexte</h3>
+      <p><em>"Max est coach sportif indépendant à Bordeaux, diplômé d'État, spécialisé en préparation physique et renforcement musculaire. Jusqu'ici, il se faisait connaître uniquement par le bouche-à-oreille et les réseaux sociaux, sans visibilité en ligne propre. Il vient de recruter une petite équipe de coachs, ce qui rend cette absence de présence en ligne d'autant plus problématique."</em></p>
+      <h3>Partie 1 — Analyse du besoin (C1)</h3>
+      <p><em>"Le projet vise à donner à Max une présence en ligne pour présenter son activité, son équipe et son offre de cours, et faciliter la prise de contact. Les utilisateurs cibles sont des prospects, des clients déjà convaincus, et Max lui-même en tant qu'administrateur du contenu. (voir Annexe 1 : Document de cadrage)"</em></p>
+      <h3>Préparer la solution technique (C2+C3)</h3>
+      <p><em>"Wagtail a été choisi pour sa gestion native des pages en arborescence et sa prise en charge native des formulaires. Deux extensions ont été ajoutées : wagtail.contrib.forms pour le formulaire de contact, wagtail.contrib.sitemaps pour le référencement."</em></p>
+      <h3>Paramétrage (C4)</h3>
+      <p><em>"Un groupe 'Coachs' a été créé, avec des droits limités à la branche 'Notre équipe' (ajout et modification, sans publication directe) : toute modification passe par une validation avant mise en ligne."</em></p>
+      <h3>Interfaces (C5)</h3>
+      <p><em>"La mise en page suit les wireframes validés : un header commun, une liste de cartes pour l'équipe et les cours, en flexbox. Le header passe d'un menu empilé à un menu horizontal à partir de 768px via une media query."</em></p>
+      <h3>Intégration des contenus (C6)</h3>
+      <p><em>"Les pages ont été créées en suivant l'arborescence du schéma fonctionnel : Accueil à la racine, puis Équipe, Cours et Contact. Les photos ont été intégrées via {% image page.photo fill-400x400 %}, générant automatiquement une version redimensionnée."</em></p>
+      <h3>Problèmes rencontrés / Solutions apportées</h3>
+      <p><em>"La page 'Notre équipe' a d'abord été créée à la racine au lieu d'être rattachée à l'accueil, provoquant une erreur 404. Elle a été déplacée sous la page d'accueil, ce qui a résolu l'erreur : un Site ne sert que le sous-arbre de sa page racine configurée."</em></p>
+      <h3>Conclusion</h3>
+      <p><em>"Ce projet m'a permis de comprendre concrètement comment un CMS comme Wagtail structure une application web, au-delà de la théorie vue en cours. Ce projet confirme mon intérêt pour les métiers liés à la gestion de projets web."</em></p>
+    </div>
+
+    <div class="card">
+      <h2>Les annexes et les captures d'écran</h2>
+      <div class="box info">
+        <span class="label">Comment ajouter un document en annexe</span>
+        <p>À la fin du rapport, créez une section "Annexes". Pour chaque document (cadrage, schéma fonctionnel, wireframes), exportez ses pages en images, insérez-les via Word (Insertion &gt; Image), numérotez-les (Annexe 1, Annexe 2...) et renvoyez-y depuis le corps du texte ("voir Annexe 1").</p>
+      </div>
+      <p>Les captures d'écran les plus utiles, par ordre de priorité :</p>
+      <ul>
+        <li><strong>Interfaces réalisées (C5)</strong> : desktop et mobile, comparées aux wireframes — l'endroit le plus utile de tout le rapport pour une capture.</li>
+        <li><strong>Permissions du groupe créé (C4)</strong> : écran d'admin montrant les droits configurés.</li>
+        <li><strong>Arbre de pages ou saisie d'un contenu (C6)</strong> : pour visualiser la hiérarchisation.</li>
+        <li><strong>Page d'accueil Wagtail ou écran de connexion admin (C3)</strong> : une seule capture suffit pour prouver que l'installation fonctionne.</li>
+        <li><strong>Erreur ou IDE (Problèmes/Solutions)</strong> : optionnel, en complément du texte.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Checklist avant envoi</h2>
+      <ul class="checklist">
+        <li>Toutes les annexes nécessaires sont présentes (cadrage, schéma fonctionnel, wireframes)</li>
+        <li>Les tableaux "Compétence / Modalités d'évaluation" du template ont été supprimés</li>
+        <li>Chaque compétence (C1 à C6, C8) est traitée explicitement, pas seulement évoquée</li>
+        <li>Les captures d'écran pertinentes sont ajoutées (interfaces, admin, erreurs si besoin)</li>
+        <li>Le document fait entre 5 et 15 pages</li>
+        <li>La Partie 3 (déploiement) a été complétée une fois le déploiement réalisé</li>
+      </ul>
+    </div>
+  </main>
+</div>
+
+<footer class="site-footer">Découverte Métier IA — Simplon Bordeaux</footer>
+
+<script src="js/search-data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

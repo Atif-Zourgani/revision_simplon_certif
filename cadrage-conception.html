@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Cadrage et wireframes (C1-C2) - Révisions Wagtail</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Revoir le cadrage (C1) et le cadre technique / wireframes (C2) de son projet personnel.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="menu-toggle" aria-label="Ouvrir le menu">Menu</button>
+    <div class="brand">Révisions Wagtail <span>Découverte Métier IA, Simplon Bordeaux</span></div>
+    <div class="search-wrap">
+      <input id="search-input" type="text" placeholder="Chercher une notion..." autocomplete="off">
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-group">
+      <a href="index.html">Accueil</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Cadrage &amp; conception</h3>
+      <a href="cadrage-conception.html" class="active">Cadrage et wireframes (C1-C2)</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Construire avec Wagtail</h3>
+      <a href="environnement-wagtail.html">Environnement et bases (C3)</a>
+      <a href="contenu-administrable.html">Contenu administrable (C4-C6)</a>
+      <a href="permissions-publication.html">Permissions et publication (C4)</a>
+      <a href="responsive-css.html">Interfaces et responsive (C5)</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Optimisation (C7)</h3>
+      <a href="accessibilite.html">Accessibilité</a>
+      <a href="seo.html">SEO et référencement</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Conformité</h3>
+      <a href="rgpd.html">RGPD</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Finaliser</h3>
+      <a href="deploiement.html">Déploiement (C8)</a>
+      <a href="rapport-soutenance.html">Rapport et soutenance</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="page-head">
+      <h1>Cadrage et wireframes</h1>
+      <p>Les deux premières étapes de votre projet personnel, avant toute ligne de code : comprendre le besoin (C1), puis le traduire en choix techniques et en maquettes (C2).</p>
+      <div class="badges">
+        <span class="badge">C1</span>
+        <span class="badge">C2</span>
+        <span class="badge alt">Évaluation 1 — Partie 1 du rapport</span>
+      </div>
+    </div>
+
+    <div class="card" id="c1">
+      <h2>C1 — Cadrer la demande <span class="source-tag">brief-c1-cadrage-projet-personnel.md</span></h2>
+      <p>Le cadrage se fait dans un document unique, rempli section par section, avant tout wireframe ou toute ligne de code. Sept sections à compléter :</p>
+      <table>
+        <tr><th>Section</th><th>Contenu attendu</th></tr>
+        <tr><td>0. Présentation</td><td>Qui est le client, son activité, pourquoi il veut un site.</td></tr>
+        <tr><td>1. Objectifs</td><td>2 à 4 objectifs concrets, formulés comme des résultats, pas des fonctionnalités.</td></tr>
+        <tr><td>2. Utilisateurs cibles</td><td>Tous les profils, sans oublier l'administrateur.</td></tr>
+        <tr><td>3. Caractéristiques d'usage</td><td>Terminaux, contraintes, et leur implication technique.</td></tr>
+        <tr><td>4. Contenus et données</td><td>Liste des pages envisagées et la nature de leur contenu.</td></tr>
+        <tr><td>5. Nom de domaine</td><td>Un nom proposé, et sa disponibilité réellement vérifiée (OVH, Gandi...).</td></tr>
+        <tr><td>6. Données personnelles</td><td>Ce qui sera collecté (ex : formulaire de contact) et les enjeux associés.</td></tr>
+      </table>
+      <div class="box info">
+        <span class="label">À retenir</span>
+        <p>Les sections doivent être cohérentes entre elles : un contenu mentionné en section 4 doit avoir un utilisateur concerné en section 2. La section 5 n'est pas une idée en l'air : la disponibilité du nom de domaine doit être vérifiée pour de vrai sur un registrar.</p>
+      </div>
+      <div class="box piege">
+        <span class="label">Piège fréquent</span>
+        <p>Formuler les objectifs comme des fonctionnalités ("avoir un formulaire de contact") plutôt que comme des résultats ("être facilement contacté par de nouveaux clients"). Le référentiel évalue la compréhension du besoin, pas une liste de specs.</p>
+      </div>
+    </div>
+
+    <div class="card" id="c2">
+      <h2>C2 — Cadre technique et wireframes <span class="source-tag">brief-c2-wireframes.md</span></h2>
+      <p>À partir du schéma fonctionnel validé (quelles pages, quelles fonctions), on dessine à quoi ressemble chaque page : une maquette basse-fidélité, en gris, sans vraie image ni couleur. L'objectif est de valider l'organisation, pas l'esthétique.</p>
+      <h3>Ce qu'un wireframe doit montrer</h3>
+      <ul>
+        <li>Les zones principales de chaque page (header, image, texte, bouton, formulaire...), dans l'ordre d'affichage.</li>
+        <li>Ce qui est administrable depuis l'admin (étiquette "contenu CMS" sur un bloc modifiable), pour garder le lien avec le cadrage.</li>
+        <li>L'enchaînement entre les pages : une flèche ou une annotation ("→ voir frame Contact") partant d'un bouton ou d'un lien vers le wireframe de destination. C'est un critère explicite du référentiel.</li>
+        <li>Au moins une version mobile pour les pages principales.</li>
+      </ul>
+      <h3>Avec Figma</h3>
+      <ul>
+        <li>Choisir <strong>Design file</strong> (pas FigJam, qui sert aux schémas, pas aux maquettes).</li>
+        <li><code>F</code> pour créer une frame (Desktop 1440×1024 ou Phone 390×844), <code>R</code> rectangle, <code>T</code> texte, <code>L</code> ligne, <code>O</code> cercle.</li>
+        <li><code>Cmd/Ctrl + D</code> pour dupliquer une frame existante plutôt que repartir de zéro.</li>
+        <li>Export final en PNG ou PDF depuis le panneau "Export".</li>
+      </ul>
+      <div class="box piege">
+        <span class="label">Piège fréquent</span>
+        <p>Oublier l'enchaînement entre les pages (critère explicitement attendu), ou inventer une fonctionnalité sur un wireframe qui n'était pas dans le schéma fonctionnel / cadrage.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Lien avec le rapport de certification</h2>
+      <p>La Partie 1 du rapport ("Analyse et compréhension du besoin" + "Préparer la solution technique") reprend directement ces deux étapes : une synthèse du cadrage, le document complet en annexe, et une justification du choix de Wagtail en lien avec le besoin identifié ici, pas une liste d'avantages génériques. Voir le <a href="rapport-soutenance.html">guide de rédaction</a>.</p>
+    </div>
+  </main>
+</div>
+
+<footer class="site-footer">Découverte Métier IA — Simplon Bordeaux</footer>
+
+<script src="js/search-data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

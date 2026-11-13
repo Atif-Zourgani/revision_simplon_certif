@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Permissions et publication (C4) - Révisions Wagtail</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Groupes, permissions de page, workflow de validation et publication directe dans Wagtail.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="menu-toggle" aria-label="Ouvrir le menu">Menu</button>
+    <div class="brand">Révisions Wagtail <span>Découverte Métier IA, Simplon Bordeaux</span></div>
+    <div class="search-wrap">
+      <input id="search-input" type="text" placeholder="Chercher une notion..." autocomplete="off">
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-group">
+      <a href="index.html">Accueil</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Cadrage &amp; conception</h3>
+      <a href="cadrage-conception.html">Cadrage et wireframes (C1-C2)</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Construire avec Wagtail</h3>
+      <a href="environnement-wagtail.html">Environnement et bases (C3)</a>
+      <a href="contenu-administrable.html">Contenu administrable (C4-C6)</a>
+      <a href="permissions-publication.html" class="active">Permissions et publication (C4)</a>
+      <a href="responsive-css.html">Interfaces et responsive (C5)</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Optimisation (C7)</h3>
+      <a href="accessibilite.html">Accessibilité</a>
+      <a href="seo.html">SEO et référencement</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Conformité</h3>
+      <a href="rgpd.html">RGPD</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Finaliser</h3>
+      <a href="deploiement.html">Déploiement (C8)</a>
+      <a href="rapport-soutenance.html">Rapport et soutenance</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="page-head">
+      <h1>Permissions, groupes et publication</h1>
+      <p>Sur un vrai projet, on n'est jamais connecté en superutilisateur qui peut tout faire. On délègue des droits précis, limités à une partie de l'arbre, avec ou sans publication directe.</p>
+      <div class="badges">
+        <span class="badge">C4</span>
+        <span class="badge alt">Brief 3g, Partie 1</span>
+      </div>
+    </div>
+
+    <div class="card" id="c4">
+      <h2>Le principe : groupes et permissions de page</h2>
+      <p>On ne donne jamais un droit directement à un utilisateur : on crée un <strong>groupe</strong> ("Settings" → "Groups"), on lui attribue des <strong>permissions de page</strong> sur une ou plusieurs pages de l'arbre, puis on place les utilisateurs concernés dans ce groupe.</p>
+      <table>
+        <tr><th>Droit</th><th>Ce qu'il permet</th></tr>
+        <tr><td><strong>Add</strong></td><td>Créer de nouvelles pages sous la page choisie.</td></tr>
+        <tr><td><strong>Edit</strong></td><td>Modifier le contenu d'une page existante (brouillon, sans le publier).</td></tr>
+        <tr><td><strong>Publish</strong></td><td>Rendre une modification visible sur le site public, sans validation d'un tiers.</td></tr>
+        <tr><td><strong>Lock</strong></td><td>Verrouiller une page pour empêcher une modification simultanée.</td></tr>
+      </table>
+      <div class="box info">
+        <span class="label">À retenir</span>
+        <p>Les droits cochés sur une page s'appliquent aussi à toutes les pages situées dessous dans l'arbre. Une seule ligne sur une page parente suffit à couvrir toute sa branche.</p>
+      </div>
+      <div class="box piege">
+        <span class="label">Piège fréquent</span>
+        <p>Oublier de cocher <strong>"Can access Wagtail admin"</strong> au niveau du groupe : sans elle, les membres ne peuvent même pas se connecter à l'admin, même avec des permissions de page correctement configurées.</p>
+      </div>
+    </div>
+
+    <div class="card" id="workflow">
+      <h2>Deux rôles possibles, une seule différence</h2>
+      <p>Même geste de création pour les deux, seule la case "Publish" change :</p>
+      <table>
+        <tr><th></th><th>Add / Edit</th><th>Publish</th></tr>
+        <tr><td>Groupe qui <strong>propose</strong> sans publier<br><span style="color:#5b6475;font-size:0.85rem;">(ex: "Coachs" sur Coach Max)</span></td><td>oui</td><td>non</td></tr>
+        <tr><td>Groupe qui <strong>publie directement</strong><br><span style="color:#5b6475;font-size:0.85rem;">(ex: "Admin contenu")</span></td><td>oui</td><td>oui</td></tr>
+      </table>
+      <h3>Sans "Publish" : le workflow de validation</h3>
+      <p>Un utilisateur sans droit de publication ne voit pas de bouton "Publish", seulement <strong>"Submit for moderation"</strong>. Ça envoie la page dans un circuit de validation, déjà configuré par défaut sur tout le site Wagtail.</p>
+      <ol>
+        <li>L'utilisateur du groupe limité modifie une page, clique "Submit for moderation".</li>
+        <li>Un compte avec les droits de publication ouvre la même page : un bandeau indique qu'elle est en attente, avec des boutons "Approve"/"Reject".</li>
+        <li>Après "Approve", la modification est publiée automatiquement, visible sur le site public.</li>
+      </ol>
+      <h3>Avec "Publish" : publication directe</h3>
+      <p>Même parcours, mais le bouton "Publish" apparaît directement : aucune validation intermédiaire, la modification est en ligne dès l'enregistrement.</p>
+    </div>
+
+    <div class="card">
+      <h2>Créer le groupe et l'utilisateur, pas à pas</h2>
+      <ol>
+        <li>"Settings" → "Groups" → "Add a group". Nommez-le (ex : "Coachs" ou "Admin contenu").</li>
+        <li>Dans "Page permissions", ajoutez une ligne par page/branche à couvrir : choisissez la page, cochez les droits voulus (Add + Edit, avec ou sans Publish).</li>
+        <li>Cochez "Can access Wagtail admin" dans les permissions générales du groupe.</li>
+        <li>Enregistrez, puis "Settings" → "Users" → "Add a user" : créez le compte, cochez le groupe dans "Groups", ne cochez ni "Superuser" ni "Staff status".</li>
+        <li>Testez en navigation privée : modifiez une page couverte, vérifiez le bouton affiché ("Submit for moderation" ou "Publish"), et vérifiez qu'une page hors périmètre reste invisible.</li>
+      </ol>
+      <div class="box ok">
+        <span class="label">Fiche complète</span>
+        <p>Un guide détaillé pas à pas existe en PDF, avec un exemple et une checklist de vérification : <em>admin-contenu-wagtail.pdf</em> (dans le dossier Briefs).</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Lien avec le rapport de certification (C4)</h2>
+      <p>La sous-partie "Explication des choix de paramétrage" de la Partie 2 du rapport attend une description concrète des groupes et permissions mis en place (pas seulement les extensions installées). Voir le <a href="rapport-soutenance.html">guide de rédaction</a>.</p>
+    </div>
+  </main>
+</div>
+
+<footer class="site-footer">Découverte Métier IA — Simplon Bordeaux</footer>
+
+<script src="js/search-data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

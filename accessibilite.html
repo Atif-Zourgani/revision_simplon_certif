@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Accessibilité (C7) - Révisions Wagtail</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Checklist d'accessibilite pour le cas pratique C7 : alt, contraste, structure semantique, labels, liens, ARIA, focus clavier, Lighthouse.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="menu-toggle" aria-label="Ouvrir le menu">Menu</button>
+    <div class="brand">Révisions Wagtail <span>Découverte Métier IA, Simplon Bordeaux</span></div>
+    <div class="search-wrap">
+      <input id="search-input" type="text" placeholder="Chercher une notion..." autocomplete="off">
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-group">
+      <a href="index.html">Accueil</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Cadrage &amp; conception</h3>
+      <a href="cadrage-conception.html">Cadrage et wireframes (C1-C2)</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Construire avec Wagtail</h3>
+      <a href="environnement-wagtail.html">Environnement et bases (C3)</a>
+      <a href="contenu-administrable.html">Contenu administrable (C4-C6)</a>
+      <a href="permissions-publication.html">Permissions et publication (C4)</a>
+      <a href="responsive-css.html">Interfaces et responsive (C5)</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Optimisation (C7)</h3>
+      <a href="accessibilite.html" class="active">Accessibilité</a>
+      <a href="seo.html">SEO et référencement</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Conformité</h3>
+      <a href="rgpd.html">RGPD</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Finaliser</h3>
+      <a href="deploiement.html">Déploiement (C8)</a>
+      <a href="rapport-soutenance.html">Rapport et soutenance</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="page-head">
+      <h1>Accessibilité</h1>
+      <p>Une relecture de votre projet avec une checklist courte et concrète. Pas de nouveau code à produire : des corrections ciblées sur ce que vous avez déjà construit, que vous devrez justifier à l'oral.</p>
+      <div class="badges">
+        <span class="badge">C7</span>
+        <span class="badge alt">Évaluation 2 — Cas pratique</span>
+        <span class="badge alt">brief-accessibilite-projet-personnel.md</span>
+      </div>
+    </div>
+
+    <div class="card" id="c7">
+      <h2>Rappel : pourquoi ce brief compte double</h2>
+      <p>Le Cas pratique (Évaluation 2) dure 15 minutes de présentation suivies de 5 minutes de questions, sur l'optimisation référencement <strong>et</strong> accessibilité de votre application. Les critères insistent autant sur la <strong>justification</strong> de vos choix que sur leur implémentation : savoir expliquer pourquoi, pas seulement cocher la case.</p>
+    </div>
+
+    <div class="card" id="alt">
+      <h2>1. Texte alternatif</h2>
+      <p>Un <code>alt</code> manquant pousse un lecteur d'écran à annoncer le nom du fichier brut. Un <code>alt</code> bien rempli décrit ce que montre l'image, pas "image de" (redondant), et sert de texte de repli si l'image ne charge pas.</p>
+      <pre>photo_alt = models.CharField(
+    max_length=255, blank=True,
+    help_text="Decrit la photo (SEO + accessibilite)",
+)</pre>
+      <pre>{% image page.photo fill-800x600 alt=page.photo_alt %}</pre>
+      <div class="box info">
+        <span class="label">Rendez-le administrable</span>
+        <p>Comme le reste du contenu : un champ dédié rempli depuis l'admin par la même personne qui choisit la photo, pas un texte écrit en dur dans le template.</p>
+      </div>
+      <div class="box ok">
+        <span class="label">Cas particulier</span>
+        <p>Pour une image purement décorative (qui n'apporte aucune information), laissez le champ vide : <code>alt=""</code> est la bonne pratique, différent d'un <code>alt</code> absent.</p>
+      </div>
+    </div>
+
+    <div class="card" id="contraste">
+      <h2>2. Contraste des couleurs</h2>
+      <p>Un texte dont la couleur est trop proche de son fond devient illisible pour une personne malvoyante, ou simplement en plein soleil. Privilégiez un texte foncé sur fond clair (ou l'inverse), en évitant les teintes proches. Lighthouse (point 8) vérifie précisément ce contraste.</p>
+    </div>
+
+    <div class="card" id="semantique">
+      <h2>3. Structure sémantique</h2>
+      <p>Un lecteur d'écran s'appuie sur <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;footer&gt;</code> comme repères de navigation. Avec des <code>&lt;div&gt;</code> génériques partout, ces repères disparaissent. Même logique pour les titres : <code>&lt;h1&gt;</code>, <code>&lt;h2&gt;</code>, <code>&lt;h3&gt;</code>... forment une table des matières que le lecteur d'écran peut parcourir.</p>
+      <ul>
+        <li>Un seul <code>&lt;h1&gt;</code> par page.</li>
+        <li>Pas de saut de niveau (un <code>&lt;h1&gt;</code> suivi directement d'un <code>&lt;h4&gt;</code>).</li>
+        <li><code>base.html</code> utilise les balises sémantiques, pas des <code>&lt;div&gt;</code> génériques.</li>
+      </ul>
+    </div>
+
+    <div class="card" id="labels">
+      <h2>4. Labels de formulaire</h2>
+      <p>Sans lien explicite entre un <code>&lt;label&gt;</code> et son champ, un lecteur d'écran annonce juste "champ de saisie", sans dire lequel. L'association via <code>for</code>/<code>id</code> règle ça, avec un bonus pour tout le monde : cliquer sur le label déplace le focus dans le champ.</p>
+      <div class="box ok">
+        <span class="label">Bonne nouvelle</span>
+        <p><code>{{ form.as_p }}</code> (vu dans le formulaire Wagtail Forms) génère déjà ce lien tout seul. À vérifier seulement si le formulaire a été personnalisé à la main, champ par champ.</p>
+      </div>
+    </div>
+
+    <div class="card" id="liens">
+      <h2>5. Texte de lien explicite</h2>
+      <p>Beaucoup de lecteurs d'écran permettent d'afficher la liste de tous les liens d'une page, sortis de leur contexte. Si plusieurs liens s'appellent tous "cliquez ici" ou "en savoir plus", impossible de savoir lequel mène où. Préférez un texte compréhensible seul : "Voir le cours Cardio Boost" plutôt que "en savoir plus".</p>
+    </div>
+
+    <div class="card" id="aria">
+      <h2>6. Attention à ARIA</h2>
+      <p>ARIA (<code>role</code>, <code>aria-label</code>, <code>aria-hidden</code>...) décrit un élément aux lecteurs d'écran, mais n'ajoute aucun comportement.</p>
+      <div class="box piege">
+        <span class="label">À éviter</span>
+        <pre>&lt;div role="button" aria-label="Envoyer" onclick="submitForm()"&gt;Envoyer&lt;/div&gt;
+&lt;!-- annonce "bouton", mais une div n'est pas focusable au clavier et ne reagit pas a Entree --&gt;</pre>
+      </div>
+      <div class="box ok">
+        <span class="label">La bonne solution</span>
+        <pre>&lt;button type="submit"&gt;Envoyer&lt;/button&gt;
+&lt;!-- fait tout ca nativement, sans aucun attribut ARIA --&gt;</pre>
+      </div>
+      <p><strong>La règle à retenir</strong> : le HTML sémantique (point 3) suffit dans la grande majorité des cas. N'ajoutez un attribut <code>aria-*</code> que si vous savez précisément pourquoi la balise native ne suffit pas.</p>
+    </div>
+
+    <div class="card" id="focus">
+      <h2>7. Focus clavier</h2>
+      <p>Une personne qui navigue au clavier avance de lien en lien avec <code>Tab</code>. Le contour de focus (bleu, par défaut) est son seul repère.</p>
+      <div class="box piege">
+        <span class="label">À éviter</span>
+        <pre>a:focus, button:focus {
+    outline: none;   /* supprime le contour, sans rien pour le remplacer */
+}</pre>
+      </div>
+      <div class="box ok">
+        <span class="label">La bonne solution</span>
+        <pre>a:focus, button:focus {
+    outline: 2px solid #e8871e;   /* personnalise, mais toujours visible */
+    outline-offset: 2px;
+}</pre>
+      </div>
+      <p><strong>Comment tester</strong> : appuyez plusieurs fois sur <code>Tab</code> depuis le haut de la page, vérifiez que vous voyez toujours clairement où vous êtes.</p>
+    </div>
+
+    <div class="card" id="lighthouse">
+      <h2>8. Audit Lighthouse — l'étape la plus importante</h2>
+      <p>Un outil ne remplace jamais une vraie attention portée aux points précédents, mais il repère objectivement ce qui aurait pu vous échapper, avec l'emplacement exact dans le code.</p>
+      <ol>
+        <li>Ouvrez la page dans Chrome, DevTools (<code>Cmd+Option+I</code> Mac, <code>F12</code> Windows/Linux).</li>
+        <li>Onglet <strong>Lighthouse</strong> (cliquez sur <code>»</code> si besoin).</li>
+        <li>Décochez tout sauf <strong>Accessibilité</strong>.</li>
+        <li>Mode "Navigation", appareil "Mobile" ou "Desktop".</li>
+        <li>"Analyser la page" / "Generate report".</li>
+      </ol>
+      <p>Le score compte moins que la liste détaillée des "Audits échoués" : vérifiez que chaque problème signalé correspond à quelque chose déjà traité dans les points 1 à 7, ou qu'il révèle un oubli. Faites tourner l'audit sur chaque page principale, pas seulement l'accueil.</p>
+    </div>
+
+    <div class="card">
+      <h2>Checklist avant l'oral</h2>
+      <ul class="checklist">
+        <li>Toutes les images ont un <code>alt</code> pertinent, ou vide si décoratives (jamais absent)</li>
+        <li>Contraste texte/fond suffisant sur les pages principales</li>
+        <li><code>header</code>/<code>nav</code>/<code>main</code>/<code>footer</code> utilisés, un seul <code>h1</code> par page, pas de saut de niveau</li>
+        <li>Labels de formulaire correctement associés</li>
+        <li>Liens et boutons avec un texte compréhensible hors contexte</li>
+        <li>Aucun <code>aria-*</code> sans justification claire</li>
+        <li>Focus clavier toujours visible</li>
+        <li>Audit Lighthouse passé sur chaque page principale, problèmes corrigés</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Pour aller plus loin</h2>
+      <ul>
+        <li><a href="https://www.w3.org/WAI/" target="_blank" rel="noopener">W3C WAI</a> — le portail principal sur l'accessibilité web.</li>
+        <li><a href="https://www.w3.org/WAI/WCAG21/quickref/" target="_blank" rel="noopener">WCAG Quick Reference</a> — version pratique et filtrable des critères officiels.</li>
+        <li><a href="https://www.w3.org/WAI/ARIA/apg/" target="_blank" rel="noopener">WAI-ARIA Authoring Practices</a> — quand et comment utiliser ARIA correctement.</li>
+        <li><a href="https://developer.mozilla.org/fr/docs/Web/Accessibility" target="_blank" rel="noopener">MDN</a> — lecture plus digeste au quotidien.</li>
+      </ul>
+    </div>
+  </main>
+</div>
+
+<footer class="site-footer">Découverte Métier IA — Simplon Bordeaux</footer>
+
+<script src="js/search-data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

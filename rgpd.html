@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>RGPD (C1/C6) - Révisions Wagtail</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="RGPD, CNIL, minimisation du formulaire, page mentions legales et politique de confidentialite.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="menu-toggle" aria-label="Ouvrir le menu">Menu</button>
+    <div class="brand">Révisions Wagtail <span>Découverte Métier IA, Simplon Bordeaux</span></div>
+    <div class="search-wrap">
+      <input id="search-input" type="text" placeholder="Chercher une notion..." autocomplete="off">
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-group">
+      <a href="index.html">Accueil</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Cadrage &amp; conception</h3>
+      <a href="cadrage-conception.html">Cadrage et wireframes (C1-C2)</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Construire avec Wagtail</h3>
+      <a href="environnement-wagtail.html">Environnement et bases (C3)</a>
+      <a href="contenu-administrable.html">Contenu administrable (C4-C6)</a>
+      <a href="permissions-publication.html">Permissions et publication (C4)</a>
+      <a href="responsive-css.html">Interfaces et responsive (C5)</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Optimisation (C7)</h3>
+      <a href="accessibilite.html">Accessibilité</a>
+      <a href="seo.html">SEO et référencement</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Conformité</h3>
+      <a href="rgpd.html" class="active">RGPD</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Finaliser</h3>
+      <a href="deploiement.html">Déploiement (C8)</a>
+      <a href="rapport-soutenance.html">Rapport et soutenance</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="page-head">
+      <h1>RGPD et protection des données</h1>
+      <p>Dès qu'un formulaire collecte un nom, un email ou un téléphone, vous exploitez des données personnelles au sens de la loi, même pour un petit site vitrine. Critère noté à la fois sur le cadrage (C1) et sur l'intégration des contenus (C6).</p>
+      <div class="badges">
+        <span class="badge">C1</span>
+        <span class="badge">C6</span>
+        <span class="badge alt">brief-rgpd-projet-personnel.md</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>RGPD et CNIL, en deux phrases</h2>
+      <p>Le <strong>RGPD</strong> (Règlement Général sur la Protection des Données) est un texte européen, en vigueur depuis 2018, qui encadre la collecte et l'usage des données personnelles. La <strong>CNIL</strong> est l'autorité française qui fait respecter ce règlement.</p>
+      <p><strong>Donnée personnelle</strong> : toute information qui permet d'identifier une personne, directement (nom, email) ou indirectement (adresse IP, téléphone). Un simple formulaire nom + email en collecte déjà, même sans compte utilisateur ni base de clients.</p>
+    </div>
+
+    <div class="card" id="principes">
+      <h2>Les 5 principes à appliquer, dans l'ordre</h2>
+      <ol>
+        <li><strong>Minimisation</strong> : ne collecter que ce qui est réellement nécessaire à la finalité annoncée.</li>
+        <li><strong>Finalité</strong> : une donnée est collectée pour un usage précis et déclaré, pas un usage flou.</li>
+        <li><strong>Information de la personne</strong> : elle doit savoir, clairement et visiblement, à quoi serviront ses informations.</li>
+        <li><strong>Durée de conservation limitée</strong> : une durée doit être définie, pas de conservation indéfinie.</li>
+        <li><strong>Droit d'accès et de suppression</strong> : la personne doit pouvoir consulter ou faire supprimer ses données, via un contact identifiable.</li>
+      </ol>
+    </div>
+
+    <div class="card" id="minimiser-formulaire">
+      <h2>1. Minimiser les champs du formulaire</h2>
+      <p>Listez précisément les champs demandés (nom, email, message, éventuellement téléphone). Pour chacun : ce champ est-il réellement nécessaire pour répondre au visiteur ? Si un champ ne sert à rien de précis (date de naissance, adresse postale...), supprimez-le.</p>
+    </div>
+
+    <div class="card" id="informer">
+      <h2>2. Informer clairement l'utilisateur</h2>
+      <p>Une phrase courte et visible juste en dessous du formulaire, pas cachée en bas de page.</p>
+      <pre>&lt;form method="post"&gt;
+    {{ form.as_p }}
+    &lt;p class="form-note"&gt;
+        Les informations transmises via ce formulaire sont utilisees uniquement pour vous repondre.
+        Elles ne sont pas transmises a des tiers.
+    &lt;/p&gt;
+    &lt;button type="submit"&gt;Envoyer&lt;/button&gt;
+&lt;/form&gt;</pre>
+    </div>
+
+    <div class="card" id="mentions-legales">
+      <h2>3. La page "Mentions légales et politique de confidentialité"</h2>
+      <p>Une page de contenu comme les autres, éditable depuis l'admin, qui précise dans l'ordre :</p>
+      <ul>
+        <li>Qui édite le site (vous ou votre client) et comment le contacter.</li>
+        <li>Qui héberge le site.</li>
+        <li>Quelles données sont collectées (les champs du formulaire) et pourquoi.</li>
+        <li>Combien de temps elles sont conservées.</li>
+        <li>Comment demander l'accès ou la suppression de ses données.</li>
+        <li>Si le site utilise des cookies de suivi ou non.</li>
+      </ul>
+      <div class="box ok">
+        <span class="label">Exemple complet</span>
+        <p>Un exemple rédigé sur Coach Max existe en PDF : <em>exemple-mentions-legales-coach-max.pdf</em> (dans le dossier Briefs). Pas à copier tel quel, chaque information doit correspondre à votre propre projet.</p>
+      </div>
+    </div>
+
+    <div class="card" id="lien-footer">
+      <h2>4. Rendre la page accessible depuis le footer</h2>
+      <p>Un lien vers cette page dans le pied de page (footer) de votre gabarit principal, pas seulement dans le menu de navigation : l'utilisateur doit pouvoir la trouver facilement, sans la chercher.</p>
+      <div class="box hold">
+        <span class="label">Hors scope ici</span>
+        <p>Si votre projet utilise un outil d'analyse de trafic (Google Analytics ou équivalent), les questions de cookies et de consentement associées seront traitées plus tard, au moment du déploiement (voir <a href="deploiement.html">Déploiement</a>).</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Checklist</h2>
+      <ul class="checklist">
+        <li>Le formulaire de contact ne collecte que des champs justifiés par sa finalité</li>
+        <li>Une information claire et visible explique l'usage des données saisies</li>
+        <li>La page mentions légales/confidentialité existe, éditable depuis l'admin</li>
+        <li>Elle précise les données collectées, leur finalité, leur durée de conservation, et le droit d'accès/suppression</li>
+        <li>Elle est accessible depuis le footer, sur toutes les pages</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Pour aller plus loin</h2>
+      <ul>
+        <li><a href="https://www.cnil.fr" target="_blank" rel="noopener">CNIL</a> — autorité française de protection des données, fiches pratiques pour les professionnels.</li>
+        <li><a href="https://www.cnil.fr/fr/guide-rgpd-du-developpeur" target="_blank" rel="noopener">Guide RGPD du développeur</a> — recommandations concrètes pensées pour les développeurs.</li>
+      </ul>
+    </div>
+  </main>
+</div>
+
+<footer class="site-footer">Découverte Métier IA — Simplon Bordeaux</footer>
+
+<script src="js/search-data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

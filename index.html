@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Révisions - Projet chef d'œuvre Wagtail</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Site de révision pour le projet personnel Wagtail : chaque compétence (C1 à C8) et chaque notion vue en brief, rangée au même endroit.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="menu-toggle" aria-label="Ouvrir le menu">Menu</button>
+    <div class="brand">Révisions Wagtail <span>Découverte Métier IA, Simplon Bordeaux</span></div>
+    <div class="search-wrap">
+      <input id="search-input" type="text" placeholder="Chercher une notion (ex: alt, Snippet, migration, sitemap...)" autocomplete="off">
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-group">
+      <a href="index.html" class="active">Accueil</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Cadrage &amp; conception</h3>
+      <a href="cadrage-conception.html">Cadrage et wireframes (C1-C2)</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Construire avec Wagtail</h3>
+      <a href="environnement-wagtail.html">Environnement et bases (C3)</a>
+      <a href="contenu-administrable.html">Contenu administrable (C4-C6)</a>
+      <a href="permissions-publication.html">Permissions et publication (C4)</a>
+      <a href="responsive-css.html">Interfaces et responsive (C5)</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Optimisation (C7)</h3>
+      <a href="accessibilite.html">Accessibilité</a>
+      <a href="seo.html">SEO et référencement</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Conformité</h3>
+      <a href="rgpd.html">RGPD</a>
+    </div>
+    <div class="sidebar-group">
+      <h3>Finaliser</h3>
+      <a href="deploiement.html">Déploiement (C8)</a>
+      <a href="rapport-soutenance.html">Rapport et soutenance</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="page-head">
+      <h1>Tout ce qu'on a vu, rangé au même endroit</h1>
+      <p>Ce site reprend l'ensemble des briefs du projet personnel et de l'entraînement Coach Max, organisés par compétence et par thème. Utilisez la recherche en haut de page si vous cherchez une notion précise, ou parcourez le menu à gauche.</p>
+    </div>
+
+    <div class="card">
+      <h2>Le programme avant mercredi</h2>
+      <div class="timeline">
+        <div class="timeline-step">
+          <span class="day">Ce week-end</span>
+          <h3>Révisions</h3>
+          <p>Reprenez chaque compétence sur ce site, vérifiez votre projet personnel point par point.</p>
+        </div>
+        <div class="timeline-step">
+          <span class="day">Lundi</span>
+          <h3>Déploiement (C8)</h3>
+          <p>Mise en ligne du projet. La page <a href="deploiement.html">Déploiement</a> et la Partie 3 du rapport seront complétées une fois les choix faits.</p>
+        </div>
+        <div class="timeline-step future">
+          <span class="day">Mercredi</span>
+          <h3>Examen</h3>
+          <p>Remise du rapport écrit + soutenance orale (Évaluation 1), et cas pratique SEO/accessibilité (Évaluation 2).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Les compétences du référentiel</h2>
+      <p>Le référentiel RS 5599 "Réaliser des applications web à l'aide d'un CMS" couvre huit compétences. Cliquez sur une carte pour revoir ce qui s'y rattache.</p>
+      <div class="comp-grid">
+        <a class="comp-card" href="cadrage-conception.html#c1">
+          <span class="comp-num">C1</span>
+          <h3>Cadrer la demande</h3>
+          <p>Comprendre et formaliser le besoin du client.</p>
+        </a>
+        <a class="comp-card" href="cadrage-conception.html#c2">
+          <span class="comp-num">C2</span>
+          <h3>Cadre technique</h3>
+          <p>Schéma fonctionnel, choix du CMS, wireframes.</p>
+        </a>
+        <a class="comp-card" href="environnement-wagtail.html#c3">
+          <span class="comp-num">C3</span>
+          <h3>Préparer l'environnement</h3>
+          <p>Installation, venv, premier projet Wagtail.</p>
+        </a>
+        <a class="comp-card" href="permissions-publication.html#c4">
+          <span class="comp-num">C4</span>
+          <h3>Configurer le CMS</h3>
+          <p>Droits, utilisateurs, extensions.</p>
+        </a>
+        <a class="comp-card" href="responsive-css.html#c5">
+          <span class="comp-num">C5</span>
+          <h3>Réaliser les interfaces</h3>
+          <p>Templates, mise en forme, responsive.</p>
+        </a>
+        <a class="comp-card" href="contenu-administrable.html#c6">
+          <span class="comp-num">C6</span>
+          <h3>Intégrer les contenus</h3>
+          <p>Champs, images, hiérarchisation dans l'arbre.</p>
+        </a>
+        <a class="comp-card" href="seo.html#c7">
+          <span class="comp-num">C7</span>
+          <h3>Optimiser</h3>
+          <p>SEO et accessibilité, le "Cas pratique" à l'oral.</p>
+        </a>
+        <a class="comp-card pending" href="deploiement.html">
+          <span class="comp-num">C8</span>
+          <h3>Déployer</h3>
+          <p>Mise en ligne. À compléter après lundi.</p>
+        </a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Les deux évaluations</h2>
+      <table>
+        <tr>
+          <th>Évaluation</th>
+          <th>Format</th>
+          <th>Compétences</th>
+        </tr>
+        <tr>
+          <td><strong>Évaluation 1</strong><br>Projet</td>
+          <td>Rapport écrit (5 à 15 pages) + soutenance orale (10 min présentation + 10 min démo + 10 min questions)</td>
+          <td>C1 à C6, et C8</td>
+        </tr>
+        <tr>
+          <td><strong>Évaluation 2</strong><br>Cas pratique</td>
+          <td>15 min de présentation + 5 min de questions, sur l'optimisation d'une application</td>
+          <td>C7 (référencement et accessibilité)</td>
+        </tr>
+      </table>
+      <p>Pour préparer le rapport écrit, consultez le <a href="rapport-soutenance.html">guide de rédaction</a>, construit section par section avec un exemple fictif sur Coach Max.</p>
+    </div>
+
+    <div class="card">
+      <h2>Comment utiliser ce site</h2>
+      <ul>
+        <li>Chaque page reprend un ou plusieurs briefs, sous forme de fiche de révision : le concept, pourquoi il existe, comment l'appliquer, et les pièges fréquents.</li>
+        <li>La barre de recherche en haut filtre toutes les notions du site par mot-clé (nom de champ, balise, commande...).</li>
+        <li>Ce site ne remplace pas vos briefs originaux : en cas de doute sur un détail précis, retournez-y, le nom du brief source est indiqué sur chaque fiche.</li>
+      </ul>
+    </div>
+  </main>
+</div>
+
+<footer class="site-footer">Découverte Métier IA — Simplon Bordeaux</footer>
+
+<script src="js/search-data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
