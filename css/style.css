@@ -1,17 +1,20 @@
 :root {
-  --navy: #1e2a45;
-  --navy-light: #2c3a5c;
-  --accent: #e8871e;
-  --accent-light: #fdebd6;
-  --green: #2e8b57;
-  --red: #c0392b;
-  --text: #1f2430;
-  --muted: #5b6475;
-  --bg: #f3f5f8;
+  --navy: #4338ca;
+  --navy-light: #4f46e5;
+  --navy-pale: #eef0ff;
+  --accent: #059669;
+  --accent-light: #e6f7ef;
+  --green: #059669;
+  --green-light: #e6f7ef;
+  --red: #d93c56;
+  --red-light: #fdeef0;
+  --text: #211f3d;
+  --muted: #5e5f74;
+  --bg: #f2f2f8;
   --white: #ffffff;
-  --border: #dadfe8;
-  --code-bg: #1f2430;
-  --code-text: #e8ecf4;
+  --border: #e4e4f0;
+  --code-bg: #1e1b3a;
+  --code-text: #e3e1f7;
   --radius: 10px;
   --max-width: 1180px;
 }
@@ -81,7 +84,7 @@ img {
 }
 
 .brand span {
-  color: #d7deec;
+  color: #d7d6f5;
   font-weight: normal;
   font-size: 0.8rem;
 }
@@ -89,7 +92,7 @@ img {
 .menu-toggle {
   display: none;
   background: none;
-  border: 1px solid #44527a;
+  border: 1px solid #6a5fd9;
   color: var(--white);
   border-radius: 6px;
   padding: 6px 10px;
@@ -108,14 +111,14 @@ img {
   width: 100%;
   padding: 8px 12px;
   border-radius: 20px;
-  border: 1px solid #44527a;
-  background: #28355a;
+  border: 1px solid #6a5fd9;
+  background: #5346d6;
   color: var(--white);
   font-size: 0.9rem;
 }
 
 .search-wrap input::placeholder {
-  color: #9aa6c3;
+  color: #c6c2f2;
 }
 
 .search-results {
@@ -253,7 +256,7 @@ img {
 
 .page-head p {
   margin: 0;
-  color: #d7deec;
+  color: #d7d6f5;
   max-width: 720px;
 }
 
@@ -270,13 +273,13 @@ img {
   font-weight: bold;
   padding: 3px 10px;
   border-radius: 999px;
-  background: var(--accent);
-  color: var(--navy);
+  background: rgba(255, 255, 255, 0.16);
+  color: var(--white);
 }
 
 .badge.alt {
-  background: #324368;
-  color: #d7deec;
+  background: rgba(255, 255, 255, 0.08);
+  color: #d7d6f5;
 }
 
 /* ---------- Cards / sections ---------- */
@@ -331,17 +334,17 @@ img {
 
 .box.info {
   border-left-color: var(--navy);
-  background: #eef1f7;
+  background: var(--navy-pale);
 }
 
 .box.piege {
   border-left-color: var(--red);
-  background: #fbeceb;
+  background: var(--red-light);
 }
 
 .box.ok {
   border-left-color: var(--green);
-  background: #eaf5ef;
+  background: var(--green-light);
 }
 
 .box.hold {
@@ -386,7 +389,7 @@ code {
 }
 
 :not(pre) > code {
-  background: #eceff5;
+  background: var(--navy-pale);
   color: var(--navy);
   padding: 1px 5px;
   border-radius: 4px;
