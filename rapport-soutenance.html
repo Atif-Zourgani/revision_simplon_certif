@@ -100,10 +100,27 @@
         <tr><td>Partie 1 — Analyse du besoin (C1)</td><td>Synthèse du cadrage : objectifs, utilisateurs, usages, contenus, enjeux RGPD. Document complet en annexe.</td></tr>
         <tr><td>Partie 1 — Solution technique (C2+C3)</td><td>Schéma fonctionnel/wireframes, pourquoi Wagtail et quelles extensions, installation de l'environnement.</td></tr>
         <tr><td>Partie 2 — Réalisation (C4, C5, C6)</td><td>Paramétrage (droits, extensions), interfaces réalisées, intégration/hiérarchisation des contenus, problèmes rencontrés, solutions apportées.</td></tr>
-        <tr><td>Partie 3 — Déploiement (C8)</td><td>À mettre de côté pour l'instant, voir <a href="deploiement.html">Déploiement</a>.</td></tr>
+        <tr><td>Partie 3 — Déploiement (C8)</td><td>Cinq points : les phases de test avec les parties prenantes, la solution d'hébergement choisie et justifiée, la mise en ligne (nom de domaine configuré, site accessible), l'outil d'analyse de trafic configuré, la stratégie de mise à jour du CMS et des extensions. Voir <a href="#partie3">Rédiger la Partie 3</a> et la page <a href="deploiement.html">Déploiement</a>.</td></tr>
         <tr><td>Partie 4 — Bilan</td><td>Objectifs atteints ou non, points forts, points perfectibles, pistes d'amélioration.</td></tr>
         <tr><td>Conclusion</td><td>Vos apprentissages personnels, pas ceux du client fictif/réel, et le lien avec votre projet professionnel.</td></tr>
       </table>
+    </div>
+
+    <div class="card" id="partie3">
+      <h2>Rédiger la Partie 3 (déploiement, C8)</h2>
+      <p>La partie est évaluée dans le <strong>rapport écrit</strong>, pas à l'oral. Elle doit couvrir cinq points, chacun avec une preuve concrète :</p>
+      <table>
+        <tr><th>Point attendu</th><th>Ce qu'on y met</th><th>Preuve à joindre</th></tr>
+        <tr><td>1. Phases de test</td><td>Qui a testé le site (un pair ou un formateur dans le rôle du client), 2 ou 3 retours réels, et la correction apportée à chacun (avant et après)</td><td>Tableau des retours, capture avant et après</td></tr>
+        <tr><td>2. Solution d'hébergement</td><td>La solution choisie et pourquoi, par comparaison avec d'autres (coût, compatibilité Python/Django, simplicité, isolation)</td><td>Le tableau comparatif de la page <a href="deploiement.html#hebergement">Déploiement</a>, reformulé avec vos mots</td></tr>
+        <tr><td>3. Mise en ligne</td><td>Comment le site a été publié, et comment l'adresse a été configurée (enregistrement DNS qui pointe vers le serveur, HTTPS)</td><td>Capture du site en ligne, adresse et cadenas visibles</td></tr>
+        <tr><td>4. Analyse de trafic</td><td>L'outil choisi (GoatCounter), comment il a été installé, et pourquoi Google Analytics n'a pas été retenu (manque de temps)</td><td>Capture du tableau de bord avec au moins une visite</td></tr>
+        <tr><td>5. Mise à jour</td><td>La stratégie : surveiller les versions, sauvegarder, tester en local, déployer, vérifier</td><td>La procédure en 5 étapes de la page <a href="deploiement.html#maj">Déploiement</a>, avec vos mots</td></tr>
+      </table>
+      <div class="box info">
+        <span class="label">À préciser sur le nom de domaine</span>
+        <p>Pour ce projet, votre site est publié sur un sous-domaine du domaine de la promo (<code>PRENOM.bdx-certif-cms.tech</code>), configuré par un enregistrement DNS qui pointe vers le serveur. Dites-le tel quel dans le rapport, et expliquez en une phrase la différence avec le nom de domaine vérifié lors du cadrage (C1), que vous réserveriez pour un vrai client.</p>
+      </div>
     </div>
 
     <div class="card">
@@ -124,6 +141,8 @@
       <p><em>"Les pages ont été créées en suivant l'arborescence du schéma fonctionnel : Accueil à la racine, puis Équipe, Cours et Contact. Les photos ont été intégrées via {% image page.photo fill-400x400 %}, générant automatiquement une version redimensionnée."</em></p>
       <h3>Problèmes rencontrés / Solutions apportées</h3>
       <p><em>"La page 'Notre équipe' a d'abord été créée à la racine au lieu d'être rattachée à l'accueil, provoquant une erreur 404. Elle a été déplacée sous la page d'accueil, ce qui a résolu l'erreur : un Site ne sert que le sous-arbre de sa page racine configurée."</em></p>
+      <h3>Déploiement (C8)</h3>
+      <p><em>"Le site a été installé sur un serveur privé virtuel hébergé en France, sous Ubuntu, avec Nginx et Gunicorn. Ce choix a été préféré à un hébergement mutualisé, conçu pour PHP, car il permet de faire tourner Django et de garder la main sur la configuration, pour un coût d'environ 12 euros par mois. Le nom de domaine coach-max.fr pointe vers le serveur grâce à un enregistrement DNS, et le HTTPS est activé par un certificat gratuit. Avant la mise en ligne, Max a testé le site et relevé que le bouton de contact était peu visible sur mobile : il a été agrandi. La fréquentation est mesurée avec GoatCounter, choisi plutôt que Google Analytics par manque de temps pour mettre en place le consentement aux cookies. Avant chaque mise à jour de Wagtail, la base est sauvegardée, la nouvelle version est testée en local, puis déployée avec git pull."</em></p>
       <h3>Conclusion</h3>
       <p><em>"Ce projet m'a permis de comprendre concrètement comment un CMS comme Wagtail structure une application web, au-delà de la théorie vue en cours. Ce projet confirme mon intérêt pour les métiers liés à la gestion de projets web."</em></p>
     </div>
@@ -140,6 +159,8 @@
         <li><strong>Permissions du groupe créé (C4)</strong> : écran d'admin montrant les droits configurés.</li>
         <li><strong>Arbre de pages ou saisie d'un contenu (C6)</strong> : pour visualiser la hiérarchisation.</li>
         <li><strong>Page d'accueil Wagtail ou écran de connexion admin (C3)</strong> : une seule capture suffit pour prouver que l'installation fonctionne.</li>
+        <li><strong>Site en ligne (C8)</strong> : l'adresse et le cadenas HTTPS visibles dans la barre du navigateur.</li>
+        <li><strong>Tableau de bord de l'analyse de trafic (C8)</strong> : GoatCounter, avec au moins une visite enregistrée.</li>
         <li><strong>Erreur ou IDE (Problèmes/Solutions)</strong> : optionnel, en complément du texte.</li>
       </ul>
     </div>
@@ -152,7 +173,7 @@
         <li>Chaque compétence (C1 à C6, C8) est traitée explicitement, pas seulement évoquée</li>
         <li>Les captures d'écran pertinentes sont ajoutées (interfaces, admin, erreurs si besoin)</li>
         <li>Le document fait entre 5 et 15 pages</li>
-        <li>La Partie 3 (déploiement) a été complétée une fois le déploiement réalisé</li>
+        <li>La Partie 3 (déploiement) traite les cinq points : tests, hébergement justifié, mise en ligne, analyse de trafic, mise à jour</li>
       </ul>
     </div>
   </main>

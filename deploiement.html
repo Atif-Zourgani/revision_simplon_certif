@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>Déploiement (C8) - Révisions Wagtail</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Deploiement du projet (C8) : page en attente, a completer lundi.">
+<meta name="description" content="Deploiement du projet (C8) : mise en production d'un projet Wagtail sur le serveur partage, etape par etape, avec HTTPS, analyse de trafic, tests et mises a jour.">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -55,36 +55,339 @@
   <main class="content">
     <div class="page-head">
       <h1>Déploiement</h1>
-      <p>Mise en ligne réelle du projet, sur un vrai hébergement et un vrai nom de domaine.</p>
+      <p>Mise en ligne réelle du projet, sur un vrai serveur et un vrai nom de domaine.</p>
       <div class="badges">
         <span class="badge alt">C8</span>
-        <span class="badge alt">Lundi</span>
+        <span class="badge alt">Serveur partagé</span>
       </div>
     </div>
 
-    <div class="card">
-      <h2>Cette page sera complétée lundi</h2>
-      <div class="box hold">
-        <span class="label">En attente</span>
-        <p>Le contenu détaillé (étapes, commandes, exemple Coach Max) sera ajouté une fois le serveur et les choix d'hébergement mis en place. Pas de contenu inventé en attendant : mieux vaut une page honnête qu'une procédure non vérifiée.</p>
-      </div>
-      <p>En attendant, voici ce que le référentiel attend sur cette compétence, pour vous permettre de préparer ce qui ne dépend pas encore du choix d'hébergement :</p>
-      <ul class="checklist">
-        <li>Les phases de test effectuées avant la mise en ligne</li>
-        <li>La solution d'hébergement choisie, et sa justification (pas seulement "c'est gratuit")</li>
-        <li>La configuration du nom de domaine (celui vérifié disponible en cadrage, C1)</li>
-        <li>L'outil d'analyse de trafic éventuel, et le consentement cookies associé</li>
-        <li>La stratégie de mise à jour du CMS une fois en ligne</li>
+    <div class="card" id="schema">
+      <h2>Comprendre ce qui se passe</h2>
+      <p>Votre projet tourne sur votre ordinateur. Pour le rendre accessible à tout le monde, on l'installe sur un serveur, qui reste allumé en permanence et possède une adresse web. Voici le chemin parcouru quand un visiteur tape l'adresse de votre site :</p>
+      <pre>Visiteur  ->  Nginx  ->  Gunicorn  ->  Django / Wagtail  ->  base SQLite</pre>
+      <ul>
+        <li><strong>Nginx</strong> reçoit les visiteurs. Il sert tout seul les fichiers statiques (CSS, JS, images) et passe le reste à Gunicorn.</li>
+        <li><strong>Gunicorn</strong> fait tourner votre application Django en permanence, comme un service du serveur.</li>
+        <li><strong>Django / Wagtail</strong> : votre projet, celui que vous connaissez.</li>
+        <li><strong>SQLite</strong> : votre base de données, un simple fichier.</li>
       </ul>
+      <p>Le serveur est partagé par la promo : chacun a son espace et son adresse <code>PRENOM.bdx-certif-cms.tech</code>, et ne voit pas celui des autres. Votre fiche d'accès (adresse, identifiant, mot de passe) vous est remise séparément. Dans cette page, <code>PRENOM</code> désigne votre identifiant.</p>
+    </div>
+
+    <div class="card" id="dev-prod">
+      <h2>Ce qui change entre développement et production</h2>
+      <p>C'est la question centrale de cette journée. Gardez ce tableau sous les yeux :</p>
+      <table>
+        <thead><tr><th></th><th>En local (développement)</th><th>En ligne (production)</th></tr></thead>
+        <tbody>
+          <tr><td>Serveur</td><td><code>runserver</code>, un seul utilisateur</td><td>Nginx devant Gunicorn, plusieurs visiteurs en même temps</td></tr>
+          <tr><td><code>DEBUG</code></td><td><code>True</code> : les erreurs détaillées s'affichent</td><td><code>False</code> : jamais de détails d'erreur visibles</td></tr>
+          <tr><td><code>SECRET_KEY</code></td><td>Une clé de développement dans le code</td><td>Une clé secrète, dans <code>local.py</code>, jamais sur GitHub</td></tr>
+          <tr><td><code>ALLOWED_HOSTS</code></td><td><code>["*"]</code> : tout est accepté</td><td>Seulement l'adresse du site</td></tr>
+          <tr><td>Fichiers statiques</td><td>Servis par Django</td><td>Rassemblés par <code>collectstatic</code>, servis par Nginx</td></tr>
+          <tr><td>HTTPS</td><td>Non (<code>http://localhost</code>)</td><td>Oui, certificat gratuit</td></tr>
+          <tr><td>E-mails</td><td>Affichés dans le terminal</td><td>Console (minimum) ou vrai serveur d'envoi</td></tr>
+          <tr><td>Base de données</td><td><code>db.sqlite3</code> sur votre poste</td><td><code>db.sqlite3</code> sur le serveur</td></tr>
+        </tbody>
+      </table>
       <div class="box info">
-        <span class="label">Ce que vous pouvez déjà préparer</span>
-        <p>Relisez le nom de domaine vérifié lors du cadrage (C1), et réfléchissez à la justification de votre choix d'hébergement (coût, simplicité, compatibilité Python/Django) : vous la rédigerez pour de vrai une fois le choix fait.</p>
+        <span class="label">Pourquoi autant de différences ?</span>
+        <p>En développement, on veut voir les erreurs et aller vite. En production, des inconnus visitent le site : on cache les détails techniques, on protège les secrets et on chiffre les échanges.</p>
+      </div>
+    </div>
+
+    <div class="card" id="local">
+      <h2>1. Préparer son projet en local</h2>
+      <h3>Vérifier requirements.txt</h3>
+      <p>Le serveur installera exactement ce que ce fichier demande. Il doit contenir au minimum :</p>
+      <pre>Django>=6.1,&lt;6.2
+wagtail>=8.0,&lt;8.1</pre>
+      <p>Si votre projet utilise d'autres bibliothèques Python, elles doivent y figurer aussi.</p>
+
+      <h3>Protéger vos secrets dans .gitignore</h3>
+      <pre>venv/
+__pycache__/
+*.pyc
+.env
+local.py
+/media/
+/static/</pre>
+      <div class="box piege">
+        <span class="label">Piège</span>
+        <p><code>local.py</code> contient les réglages secrets (clé secrète, identifiants de messagerie). Il ne doit <strong>jamais</strong> être envoyé sur GitHub : n'importe qui pourrait le lire.</p>
+      </div>
+
+      <h3>Pousser le projet sur GitHub</h3>
+      <pre>git add .
+git commit -m "Prêt pour la mise en production"
+git push</pre>
+      <p>Le serveur récupère votre code avec <code>git clone</code> : le dépôt doit donc être accessible, <strong>public</strong> le temps de la mise en production. Vérifiez qu'il ne contient aucun mot de passe ni aucune clé secrète.</p>
+    </div>
+
+    <div class="card" id="serveur">
+      <h2>2. Sur le serveur, étape par étape</h2>
+
+      <h3>Se connecter</h3>
+      <p>Dans le terminal de votre ordinateur :</p>
+      <pre>ssh PRENOM@bdx-certif-cms.tech</pre>
+      <ul>
+        <li>À la première connexion, le terminal demande de confirmer : tapez <code>yes</code>.</li>
+        <li>Tapez votre mot de passe. <strong>Rien ne s'affiche quand vous tapez</strong>, c'est normal.</li>
+        <li>Vous êtes connecté quand l'invite affiche <code>PRENOM@srv...:~$</code>.</li>
+      </ul>
+
+      <h3>Récupérer le code</h3>
+      <pre>git clone https://github.com/VOTRE-COMPTE/VOTRE-DEPOT.git app</pre>
+      <div class="box piege">
+        <span class="label">Piège</span>
+        <p>Le dossier <strong>doit s'appeler <code>app</code></strong> : c'est là que le serveur cherchera votre projet.</p>
+      </div>
+
+      <h3>Créer l'environnement Python</h3>
+      <pre>python3 -m venv venv
+source venv/bin/activate
+pip install -r app/requirements.txt     # une à deux minutes</pre>
+      <p>Même principe qu'en local : un environnement isolé, avec les versions demandées par votre projet.</p>
+
+      <h3>Publier avec <code>sudo publier</code></h3>
+      <pre>sudo publier</pre>
+      <p>Cette commande affiche six étapes, avec une explication pour chacune. Lisez-les, elles sont le coeur de la mise en production :</p>
+      <table>
+        <thead><tr><th>Étape</th><th>Ce qui se passe</th></tr></thead>
+        <tbody>
+          <tr><td>1. Vérification du projet</td><td>Le serveur contrôle que votre code est dans <code>~/app</code> et que <code>~/venv</code> existe.</td></tr>
+          <tr><td>2. Réglages de production</td><td>Création du fichier <code>settings/local.py</code> : clé secrète, domaine autorisé, e-mail.</td></tr>
+          <tr><td>3. Base et fichiers statiques</td><td><code>migrate</code> met la base à jour, <code>collectstatic</code> rassemble les CSS et JS.</td></tr>
+          <tr><td>4. Gunicorn</td><td>Votre application est lancée comme un service permanent.</td></tr>
+          <tr><td>5. Nginx</td><td>Le serveur web est configuré pour votre adresse.</td></tr>
+          <tr><td>6. HTTPS</td><td>Un certificat gratuit est demandé automatiquement.</td></tr>
+        </tbody>
+      </table>
+      <div class="box ok">
+        <span class="label">HTTPS déjà géré</span>
+        <p>Le HTTPS est géré par le serveur : <strong>vous n'avez rien à configurer</strong>. L'étape 6 demande votre certificat gratuit (Let's Encrypt) toute seule. À quoi ça sert : le HTTPS chiffre les échanges entre le visiteur et votre site (le cadenas du navigateur), évite l'avertissement « Non sécurisé » et protège les données saisies, par exemple dans le formulaire de contact ou à la connexion à l'administration.</p>
+      </div>
+      <p>Si une étape échoue, le message d'erreur s'affiche juste au-dessus : lisez-le, corrigez, puis relancez <code>sudo publier</code>. Vous pouvez la relancer autant de fois que nécessaire.</p>
+
+      <h3>Vérifier en ligne</h3>
+      <p>Ouvrez <code>https://PRENOM.bdx-certif-cms.tech</code> : le site doit s'afficher avec le cadenas. Testez aussi <code>/admin/</code>. En cas d'erreur, lisez les messages de votre site :</p>
+      <pre>sudo mes-logs</pre>
+
+      <h3>Entrer dans l'administration</h3>
+      <p>Pour vous connecter à <code>/admin/</code>, il faut un compte administrateur sur le serveur :</p>
+      <ul>
+        <li>Si vous avez envoyé votre base (ou si elle est versionnée dans Git), vos comptes existent déjà : utilisez les mêmes identifiants qu'en local.</li>
+        <li>Si le mot de passe est oublié, ou si vous n'avez pas envoyé votre base, créez ou changez le compte sur le serveur :</li>
+      </ul>
+      <pre>cd ~/app
+source ~/venv/bin/activate
+export DJANGO_SETTINGS_MODULE=NOM_DU_PROJET.settings.production
+python manage.py createsuperuser        # cree un nouveau compte administrateur
+python manage.py changepassword NOM     # ou : change le mot de passe d'un compte existant</pre>
+      <div class="box info">
+        <span class="label">Pourquoi DJANGO_SETTINGS_MODULE ?</span>
+        <p>Par défaut, <code>manage.py</code> utilise les réglages de développement. Cette ligne lui dit d'utiliser ceux de production, ceux du serveur, avec la bonne base.</p>
+      </div>
+    </div>
+
+    <div class="card" id="donnees">
+      <h2>3. Envoyer sa base de données et ses médias</h2>
+      <p>Votre base SQLite contient vos comptes administrateur et les contenus de votre site. Vos médias sont les images et documents envoyés depuis l'administration.</p>
+      <div class="box info">
+        <span class="label">À regarder d'abord</span>
+        <p>Si <code>db.sqlite3</code> et le dossier <code>media</code> sont versionnés dans Git, <code>git clone</code> les a déjà apportés : vous n'avez rien à faire. Sinon (c'est la bonne pratique de les ignorer), envoyez-les depuis <strong>votre ordinateur</strong>, pas depuis le serveur.</p>
+      </div>
+      <p>Placez-vous dans le dossier de votre projet (celui qui contient <code>manage.py</code>) :</p>
+      <pre>scp db.sqlite3 PRENOM@bdx-certif-cms.tech:app/
+scp -r media PRENOM@bdx-certif-cms.tech:app/</pre>
+      <p>Le dossier <code>app</code> doit exister sur le serveur : faites cette étape <strong>après</strong> le <code>git clone</code>, puis relancez <code>sudo publier</code>. Le mot de passe est redemandé à chaque commande.</p>
+      <div class="box hold">
+        <span class="label">Plan B</span>
+        <p>Si la copie vous bloque : versionnez la base et les médias dans Git (retirez <code>db.sqlite3</code> et <code>/media/</code> du <code>.gitignore</code>, puis <code>add</code>, <code>commit</code>, <code>push</code>), et faites <code>git pull</code> dans le dossier <code>app</code> du serveur.</p>
+      </div>
+      <div class="box piege">
+        <span class="label">Piège</span>
+        <p>Si votre base est versionnée dans Git, un <code>git pull</code> peut remplacer celle du serveur et effacer les contenus créés en production. Choisissez un seul endroit où l'on modifie les contenus (l'ordinateur ou le serveur) et gardez-le.</p>
+      </div>
+
+      <h3>Les photos et les médias en production</h3>
+      <p>Il y a deux sortes d'images dans un projet Wagtail, et elles ne voyagent pas pareil :</p>
+      <table>
+        <thead><tr><th>Sorte d'image</th><th>Où elle est</th><th>Comment elle arrive en ligne</th></tr></thead>
+        <tbody>
+          <tr><td>Image du site (logo, décor, dans <code>static/</code>)</td><td>Dans le code du projet</td><td>Avec <code>git clone</code> et <code>sudo publier</code> (<code>collectstatic</code>)</td></tr>
+          <tr><td>Photo ajoutée depuis l'administration (Images, ou un champ photo d'une page)</td><td>Dans le dossier <code>media</code></td><td>Avec <code>scp</code>, ou en l'ajoutant directement depuis l'administration en ligne</td></tr>
+        </tbody>
+      </table>
+      <ul>
+        <li>Ajouter de nouvelles photos depuis l'administration en ligne fonctionne : elles sont enregistrées dans <code>~/app/media</code> sur le serveur, et Nginx les sert. Chaque envoi peut faire jusqu'à 20 Mo.</li>
+        <li>Ces photos restent sur le serveur : elles ne sont pas dans Git, et ne sont pas sur votre ordinateur. Si vous ajoutez des photos en local plus tard, il faut les renvoyer avec <code>scp</code>.</li>
+      </ul>
+      <div class="box piege">
+        <span class="label">Piège</span>
+        <p>Si une image ne s'affiche pas (absente ou erreur 403 « Forbidden ») : relancez <code>sudo publier</code>, qui remet les droits de lecture du dossier <code>media</code>. Nginx lit les images directement dans ce dossier, sans passer par Django : il doit donc avoir le droit de les lire, un fichier copié avec des droits trop restrictifs est refusé.</p>
+      </div>
+
+      <h3>Corriger le nom d'hôte dans Wagtail</h3>
+      <p>Une base copiée depuis votre ordinateur garde l'adresse <code>localhost</code> dans les réglages de site de Wagtail. Le site s'affiche quand même, mais les liens absolus et le plan du site utiliseront la mauvaise adresse. Dans l'administration : <strong>Réglages</strong>, puis <strong>Sites</strong>, puis modifier votre site :</p>
+      <ul>
+        <li>nom d'hôte : <code>PRENOM.bdx-certif-cms.tech</code></li>
+        <li>port : <code>443</code> (celui du HTTPS)</li>
+        <li>case « site par défaut » : cochée</li>
+      </ul>
+    </div>
+
+    <div class="card" id="reglages">
+      <h2>4. Réglages de production et e-mails</h2>
+      <p>Au premier <code>sudo publier</code>, un fichier <code>NOM_DU_PROJET/settings/local.py</code> est créé pour vous sur le serveur. Pour le modifier : <code>nano app/NOM_DU_PROJET/settings/local.py</code> (<code>Ctrl+O</code> puis Entrée pour enregistrer, <code>Ctrl+X</code> pour quitter), puis <code>sudo publier</code>.</p>
+      <table>
+        <thead><tr><th>Réglage</th><th>À quoi il sert</th></tr></thead>
+        <tbody>
+          <tr><td><code>SECRET_KEY</code></td><td>Clé secrète de Django, propre à votre site. Ne jamais la partager.</td></tr>
+          <tr><td><code>ALLOWED_HOSTS</code></td><td>Adresses pour lesquelles Django accepte de répondre. Sinon : erreur 400.</td></tr>
+          <tr><td><code>CSRF_TRUSTED_ORIGINS</code></td><td>Adresses autorisées à envoyer des formulaires (en <code>https://</code>).</td></tr>
+          <tr><td><code>SECURE_PROXY_SSL_HEADER</code></td><td>Indique à Django que le HTTPS est géré en amont par Nginx.</td></tr>
+          <tr><td><code>EMAIL_BACKEND</code></td><td>Comment les e-mails sont envoyés (voir ci-dessous).</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Le formulaire de contact en production</h3>
+      <p>Rien à installer sur le serveur : l'extension de formulaires (<code>wagtail.contrib.forms</code>) est livrée avec Wagtail, et déclarée dans vos réglages. Voici ce qui voyage et comment :</p>
+      <ul>
+        <li><strong>Le code du formulaire</strong> (votre classe de page, son template) arrive avec <code>git clone</code>.</li>
+        <li><strong>Les tables qui enregistrent les messages</strong> sont créées par <code>migrate</code>, lancé par <code>sudo publier</code>.</li>
+        <li><strong>La page de contact et ses champs</strong> (nom, e-mail, message) sont du contenu de la base de données : ils arrivent avec votre <code>db.sqlite3</code>. Si vous n'avez pas envoyé votre base, la page n'existe pas en ligne : recréez-la dans l'administration, avec ses champs.</li>
+        <li><strong>Les messages reçus</strong> apparaissent dans l'administration, menu Formulaires.</li>
+      </ul>
+
+      <h3>Faire partir les e-mails du formulaire de contact</h3>
+      <p>Le formulaire de contact (extension de formulaires de Wagtail) enregistre le message dans l'administration, puis essaie d'envoyer un e-mail. Il faut régler l'envoi, <strong>en local comme en production</strong>. Trois niveaux :</p>
+      <table>
+        <thead><tr><th>Niveau</th><th>Où</th><th>Réglage</th></tr></thead>
+        <tbody>
+          <tr><td>1. Développement</td><td>En local</td><td><code>EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"</code> : le message s'affiche dans le terminal (déjà dans <code>dev.py</code>).</td></tr>
+          <tr><td>2. Production minimale</td><td>Sur le serveur</td><td>La même ligne dans <code>local.py</code> (ajoutée par <code>sudo publier</code>). Le message est enregistré dans l'administration, et le texte de l'e-mail est visible avec <code>sudo mes-logs</code>.</td></tr>
+          <tr><td>3. Envoi réel</td><td>Sur le serveur</td><td>Un vrai serveur d'envoi (SMTP), voir ci-dessous.</td></tr>
+        </tbody>
+      </table>
+      <div class="box piege">
+        <span class="label">Piège</span>
+        <p>Sans réglage d'envoi en production, le formulaire plante (erreur 500 à l'envoi), même si le message est bien enregistré. C'est pourquoi <code>sudo publier</code> ajoute le niveau 2 pour vous.</p>
+      </div>
+      <p>Pour cette mise en production, le niveau 2 suffit. Le niveau 3 se met dans <code>local.py</code>, jamais dans Git :</p>
+      <pre>EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.exemple.fr"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "votre-identifiant"
+EMAIL_HOST_PASSWORD = "votre-mot-de-passe-d-application"
+DEFAULT_FROM_EMAIL = "contact@exemple.fr"</pre>
+      <p><strong>Pour tester</strong> : envoyez un message depuis votre formulaire en ligne, puis vérifiez qu'il apparaît dans l'administration (menu Formulaires) et, au niveau 2, dans <code>sudo mes-logs</code>.</p>
+    </div>
+
+    <div class="card" id="trafic">
+      <h2>5. Analyse de trafic : GoatCounter</h2>
+      <p>Nous utilisons <strong>GoatCounter</strong> : gratuit, simple, sans base de données à gérer.</p>
+      <div class="box info">
+        <span class="label">Pourquoi pas Google Analytics ?</span>
+        <p>Par manque de temps : il demande de créer un compte Google, de configurer la propriété, puis de mettre en place un bandeau de consentement aux cookies. GoatCounter donne un résultat exploitable en quelques minutes. Ce choix tient au temps disponible, pas à une limite de Google Analytics.</p>
+      </div>
+      <ol>
+        <li>Créez votre compte gratuit sur <code>goatcounter.com</code> et choisissez un <strong>code de site</strong> (par exemple votre prénom).</li>
+        <li>Dans <code>base.html</code> (dossier <code>templates</code> de votre projet), ajoutez cette ligne juste avant la balise <code>&lt;/body&gt;</code>, en remplaçant <code>MONCODE</code> :</li>
+      </ol>
+      <pre>&lt;script data-goatcounter="https://MONCODE.goatcounter.com/count" async src="//gc.zgo.at/count.js">&lt;/script></pre>
+      <ol start="3">
+        <li>En local : <code>git add</code>, <code>git commit</code>, <code>git push</code>.</li>
+        <li>Sur le serveur : <code>cd ~/app</code>, <code>git pull</code>, <code>sudo publier</code>.</li>
+        <li>Visitez votre site, rechargez le tableau de bord de GoatCounter : votre visite doit apparaître. <strong>Faites une capture d'écran</strong> pour le rapport.</li>
+      </ol>
+      <p>Côté RGPD, GoatCounter se présente comme un outil qui ne dépose pas de cookies de suivi. Reformulez dans le rapport ce que vous constatez vous-même, en citant la page de l'outil, et reliez-le à votre travail sur la <a href="rgpd.html">conformité RGPD</a>.</p>
+    </div>
+
+    <div class="card" id="tests">
+      <h2>6. Phases de test (recette)</h2>
+      <p>Il ne s'agit pas de tests automatisés, mais de <strong>faire tester le site par une autre personne</strong>, comme avec un client.</p>
+      <ul class="checklist">
+        <li>Vos propres tests : toutes les pages, les liens, le formulaire de contact, l'administration, l'affichage sur téléphone</li>
+        <li>Une relecture par un tiers (un pair, ou un formateur qui joue le client) sur le site en ligne</li>
+        <li>2 ou 3 retours réels notés, puis corrigés</li>
+        <li>Dans le rapport, un avant et un après pour chaque retour pris en compte</li>
+      </ul>
+      <table>
+        <thead><tr><th>Retour du testeur</th><th>Page</th><th>Correction apportée</th><th>Date</th></tr></thead>
+        <tbody>
+          <tr><td>Exemple : le bouton Contact est peu visible sur mobile</td><td>Accueil</td><td>Taille et couleur du bouton modifiées</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" id="maj">
+      <h2>7. Mettre à jour son site</h2>
+      <h3>Mettre à jour son code</h3>
+      <ol>
+        <li>Modifier et tester en local.</li>
+        <li><code>git push</code>.</li>
+        <li>Sur le serveur : <code>cd ~/app</code>, <code>git pull</code>, puis <code>sudo publier</code>.</li>
+      </ol>
+      <h3>Mettre à jour Wagtail, Django et les extensions</h3>
+      <ol>
+        <li><strong>Surveiller</strong> : lire les notes de version de Wagtail et de Django, en particulier les correctifs de sécurité.</li>
+        <li><strong>Sauvegarder</strong> la base avant toute mise à jour :</li>
+      </ol>
+      <pre>cp ~/app/db.sqlite3 ~/sauvegarde-$(date +%F).sqlite3</pre>
+      <ol start="3">
+        <li><strong>Tester en local</strong> : modifier la plage de versions dans <code>requirements.txt</code>, mettre à jour, vérifier que le site fonctionne.</li>
+        <li><strong>Déployer</strong> : <code>git push</code>, puis sur le serveur <code>git pull</code>, <code>pip install -r app/requirements.txt</code>, <code>sudo publier</code>.</li>
+        <li><strong>Vérifier</strong> le site en ligne, et revenir à la sauvegarde en cas de problème.</li>
+      </ol>
+      <div class="box info">
+        <span class="label">À retenir</span>
+        <p>Une plage comme <code>wagtail>=8.0,&lt;8.1</code> reçoit automatiquement les correctifs, tout en bloquant les changements de version majeure : celles-ci se préparent, elles ne se font pas par surprise.</p>
+      </div>
+    </div>
+
+    <div class="card" id="depannage">
+      <h2>En cas de problème</h2>
+      <table>
+        <thead><tr><th>Ce que vous voyez</th><th>Cause probable</th><th>Que faire</th></tr></thead>
+        <tbody>
+          <tr><td>« Je ne trouve pas manage.py »</td><td>Le projet n'est pas dans <code>~/app</code></td><td>Refaire <code>git clone ... app</code> depuis le dossier personnel</td></tr>
+          <tr><td>Erreur 400 « Bad Request »</td><td>L'adresse n'est pas dans <code>ALLOWED_HOSTS</code></td><td>Vérifier <code>local.py</code>, puis <code>sudo publier</code></td></tr>
+          <tr><td>Erreur 500</td><td>Erreur dans le code ou les réglages</td><td><code>sudo mes-logs</code> et lire la dernière erreur</td></tr>
+          <tr><td>Erreur 500 à l'envoi du formulaire</td><td>Pas de réglage d'envoi des e-mails</td><td>Vérifier <code>EMAIL_BACKEND</code> dans <code>local.py</code></td></tr>
+          <tr><td>Site sans style</td><td>Fichiers statiques non rassemblés</td><td>Relancer <code>sudo publier</code></td></tr>
+          <tr><td>Images manquantes</td><td>Dossier <code>media</code> non envoyé</td><td>Voir « Envoyer sa base de données et ses médias »</td></tr>
+          <tr><td>Image refusée (erreur 403)</td><td>Droits de lecture trop restrictifs sur <code>media</code></td><td>Relancer <code>sudo publier</code></td></tr>
+          <tr><td>Contenus et comptes absents</td><td>Base de données non envoyée</td><td>Voir « Envoyer sa base de données et ses médias »</td></tr>
+          <tr><td>« Non sécurisé » dans le navigateur</td><td>Certificat pas encore obtenu</td><td>Relancer <code>sudo publier</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" id="hebergement">
+      <h2>Justifier la solution d'hébergement</h2>
+      <p>Éléments à reformuler avec vos mots dans la partie « Déploiement » du rapport. <strong>Solution retenue</strong> : un serveur privé virtuel (VPS) chez Hostinger, en France, partagé par la promo, sous Ubuntu, avec Nginx, Gunicorn et SQLite, et un sous-domaine par apprenant.</p>
+      <table>
+        <thead><tr><th>Critère</th><th>VPS (choisi)</th><th>Mutualisé (cPanel)</th><th>Plateforme clé en main</th></tr></thead>
+        <tbody>
+          <tr><td>Compatibilité Python/Django</td><td>Totale</td><td>Limitée, conçu pour PHP</td><td>Bonne</td></tr>
+          <tr><td>Coût pour la promo</td><td>Environ 12 euros TTC pour le mois, pour tous</td><td>Quelques euros par mois, mais un espace unique partagé</td><td>Un abonnement par projet</td></tr>
+          <tr><td>Isolation entre apprenants</td><td>Un compte par apprenant</td><td>Difficile sans offre revendeur</td><td>Un projet par compte</td></tr>
+          <tr><td>Valeur pédagogique</td><td>Élevée : on voit chaque brique</td><td>Faible : l'hébergeur cache tout</td><td>Moyenne</td></tr>
+          <tr><td>Flexibilité</td><td>Totale</td><td>Faible</td><td>Moyenne</td></tr>
+        </tbody>
+      </table>
+      <div class="box info">
+        <span class="label">À ajouter</span>
+        <p>Ce qui a le plus compté dans votre projet (coût, simplicité, compatibilité), et pas seulement « c'est gratuit ».</p>
       </div>
     </div>
 
     <div class="card">
       <h2>Lien avec le rapport de certification</h2>
-      <p>La Partie 3 du rapport ("Déploiement de l'application", C8) est elle aussi mise de côté pour l'instant dans le <a href="rapport-soutenance.html">guide de rédaction</a>, pour la même raison. Elle sera complétée au même moment que cette page.</p>
+      <p>La Partie 3 du rapport (« Déploiement de l'application », C8) couvre cinq points : les phases de test, la solution d'hébergement justifiée, la mise en ligne avec le nom de domaine, l'outil d'analyse de trafic et la stratégie de mise à jour. Chacun correspond à une section de cette page. Voir aussi le <a href="rapport-soutenance.html">guide de rédaction</a>.</p>
     </div>
   </main>
 </div>
